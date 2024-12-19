@@ -2,7 +2,7 @@ use std::{str::FromStr, sync::Arc, time::Duration};
 
 use crate::{session::SessionInfo, transport::core::TransportPollResult};
 use arc_swap::{ArcSwap, ArcSwapOption};
-use log::{error, info};
+use log::{debug, error};
 use opcua_core::{
     comms::secure_channel::{Role, SecureChannel},
     sync::RwLock,
@@ -229,7 +229,7 @@ impl AsyncSecureChannel {
         &self,
     ) -> Result<(TcpTransport, tokio::sync::mpsc::Sender<OutgoingMessage>), StatusCode> {
         let endpoint_url = self.session_info.endpoint.endpoint_url.clone();
-        info!("Connect");
+        debug!("Connect");
         let security_policy =
             SecurityPolicy::from_str(self.session_info.endpoint.security_policy_uri.as_ref())
                 .unwrap();
@@ -258,8 +258,8 @@ impl AsyncSecureChannel {
                 let _ = secure_channel.set_remote_cert_from_byte_string(
                     &self.session_info.endpoint.server_certificate,
                 );
-                info!("Security policy = {:?}", security_policy);
-                info!(
+                debug!("Security policy = {:?}", security_policy);
+                debug!(
                     "Security mode = {:?}",
                     self.session_info.endpoint.security_mode
                 );

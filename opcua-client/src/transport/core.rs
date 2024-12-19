@@ -3,7 +3,7 @@ use std::sync::Arc;
 use std::time::Instant;
 
 use futures::future::Either;
-use log::{debug, error, info, trace};
+use log::{debug, error, trace, warn};
 use opcua_core::{trace_read_lock, trace_write_lock, RequestMessage, ResponseMessage};
 use parking_lot::RwLock;
 
@@ -205,7 +205,7 @@ impl TransportState {
                 }
             }
             MessageIsFinalType::FinalError => {
-                info!("Discarding chunk marked in as final error");
+                warn!("Discarding chunk marked in as final error");
                 let message_state = self.message_states.remove(&req_id).unwrap();
                 let _ = message_state
                     .callback
@@ -270,8 +270,8 @@ impl TransportState {
             .sequence_number;
         for c in chunks {
             if c.header.sequence_header.sequence_number != expect_sequence_number {
-                info!(
-                    "receive wrong chunk expect seq={},got={}",
+                warn!(
+                    "receive wrong chunk expect seq={} got={}",
                     expect_sequence_number, c.header.sequence_header.sequence_number
                 );
                 continue; //may be duplicate chunk

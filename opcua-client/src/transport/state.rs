@@ -3,7 +3,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-use log::{debug, info, trace};
+use log::{debug, trace};
 use tokio::sync::mpsc::error::SendTimeoutError;
 
 use crate::{session::process_unexpected_response, transport::OutgoingMessage};
@@ -122,9 +122,9 @@ impl SecureChannelState {
             )
         };
 
-        info!("Making secure channel request");
-        info!("security_mode = {:?}", security_mode);
-        info!("security_policy = {:?}", security_policy);
+        debug!("Making secure channel request");
+        debug!("security_mode = {:?}", security_mode);
+        debug!("security_policy = {:?}", security_policy);
 
         let request = OpenSecureChannelRequest {
             request_header: self.make_request_header(timeout),
