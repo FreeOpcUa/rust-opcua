@@ -42,7 +42,7 @@ pub fn url_matches_except_host(url1: &str, url2: &str) -> bool {
             // Both hostnames are set to xxxx so the comparison should come out as the same url
             // if they actually match one another.
             if url1.set_host(Some("xxxx")).is_ok() && url2.set_host(Some("xxxx")).is_ok() {
-                return url1 == url2;
+                return url1.as_str().trim_end_matches("/") == url2.as_str().trim_end_matches("/");
             }
         } else {
             error!("Cannot parse url \"{}\"", url2);
