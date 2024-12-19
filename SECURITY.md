@@ -1,6 +1,6 @@
 # Security Policy
 
-OPC UA for Rust is still ongoing development so security is addressed in the form of raising issues or contacting the author.
+OPC UA for Rust is still ongoing development so security is addressed in the form of raising issues or contacting the authors.
 
 ## Supported Versions
 

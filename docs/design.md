@@ -267,6 +267,8 @@ The server has a very different approach to this, instead using a pattern common
 
 ## 3rd-party servers
 
+### Node
+
 There are also a couple of [node-opcua](https://github.com/node-opcua) scripts in `3rd-party/node-opcua`.
 
 1. `client.js` - an OPC UA client that connects to a server and subscribes to v1, v2, v3, and v4.
@@ -280,3 +282,17 @@ To use them:
 2. `cd 3rd-party/node-opcua`
 3. `npm install`
 4. `node server.js` or `node client.js`
+
+### .NET
+
+In `dotnet-tests` we have defined a simple server in [UA-.NET Standard](https://github.com/Opcfoundation/UA-.NETStandard), the official .NET reference SDK, which we use for automated testing.
+
+To run this server, install .NET SDK 8 or later: [here](https://dotnet.microsoft.com/en-us/download), then simply run the server with `dotnet run`.
+
+```
+dotnet run --project dotnet-tests/TestServer -- dotnet-tests/TestServer.Config.xml
+```
+
+The first argument is the path to the XML config file.
+
+The server is not really designed for running manually like this, it is tightly coupled with the external test harness, and controlled through JSON payloads sent over standard input.

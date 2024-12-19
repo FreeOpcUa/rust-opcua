@@ -1,10 +1,8 @@
 # Introduction
 
-This is an [OPC UA](https://opcfoundation.org/about/opc-technologies/opc-ua/) server / client API implementation for Rust.
-
-**Note:** This is a fork of [opcua](https://github.com/locka99/opcua) with a broader goal of a generic OPC-UA implementation and a number of different design decisions.
-
 [![Build Status](https://github.com/freeopcua/rust-opcua/workflows/OPC%20UA%20for%20Rust/badge.svg)](https://github.com/freeopcua/rust-opcua/actions/workflows/main.yml)
+
+This is an [OPC UA](https://opcfoundation.org/about/opc-technologies/opc-ua/) server / client API implementation for Rust.
 
 OPC-UA is an industry standard for information modeling and communication. It is used for control systems, IoT, etc.
 
@@ -13,6 +11,10 @@ The OPC-UA standard is very large and complex, and implementations are often fla
 Read the [compatibility](./docs/compatibility.md) page for how the implementation conforms with the OPC UA spec.
 
 Read the [change log](./CHANGELOG.md) for changes per version as well as aspirational / upcoming work.
+
+## This is a fork
+
+This is a fork of [opcua](https://github.com/locka99/opcua) with a broader goal of a generic OPC-UA implementation and a number of different design decisions. See [fork.md](docs/fork.md) for details on this decision and the differences between this library and the original.
 
 # License
 
