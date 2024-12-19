@@ -56,7 +56,7 @@ pub use services::subscriptions::{
     CreateMonitoredItems, CreateSubscription, DataChangeCallback, DeleteMonitoredItems,
     DeleteSubscriptions, EventCallback, ModifyMonitoredItems, ModifySubscription, MonitoredItem,
     OnSubscriptionNotification, SetMonitoringMode, SetPublishingMode, SetTriggering, Subscription,
-    SubscriptionCallbacks, TransferSubscriptions,
+    SubscriptionActivity, SubscriptionCallbacks, TransferSubscriptions,
 };
 pub use services::view::{
     Browse, BrowseNext, RegisterNodes, TranslateBrowsePaths, UnregisterNodes,

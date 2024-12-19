@@ -129,7 +129,7 @@ pub use session::{
     Client, DataChangeCallback, DefaultRetryPolicy, EventCallback, HistoryReadAction,
     HistoryUpdateAction, MonitoredItem, OnSubscriptionNotification, RequestRetryPolicy, Session,
     SessionActivity, SessionConnectMode, SessionEventLoop, SessionPollResult, Subscription,
-    SubscriptionCallbacks, UARequest,
+    SubscriptionActivity, SubscriptionCallbacks, UARequest,
 };
 pub use transport::AsyncSecureChannel;
 
