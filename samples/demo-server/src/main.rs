@@ -14,8 +14,6 @@
 //! If you want a simpler`simple-server`
 //!
 //! Use simple-server to understand a terse and simple example.
-#[macro_use]
-extern crate lazy_static;
 
 #[macro_use]
 extern crate log;

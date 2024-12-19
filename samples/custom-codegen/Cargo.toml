@@ -10,7 +10,7 @@ json = ["serde_json", "serde", "serde_with", "opcua/json"]
 default = ["xml", "json"]
 
 [dependencies]
-tokio = { version = "1.36.0", features = ["full"] }
+tokio = { workspace = true }
 log = { workspace = true }
 serde_json = { workspace = true, optional = true }
 serde = { workspace = true, optional = true }
@@ -18,5 +18,4 @@ serde_with = { workspace = true, optional = true }
 
 [dependencies.opcua]
 path = "../../lib"
-version = "0.13.0" # OPCUARustVersion
 features = ["client", "console-logging"]

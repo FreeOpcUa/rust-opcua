@@ -31,7 +31,7 @@ fn opc_url_from_str(s: &str) -> Result<Url, url::ParseError> {
 pub fn url_with_replaced_hostname(url: &str, hostname: &str) -> Result<String, url::ParseError> {
     let mut url = opc_url_from_str(url)?;
     let _ = url.set_host(Some(hostname));
-    Ok(url.into_string())
+    Ok(url.into())
 }
 
 /// Test if the two urls match except for the hostname. Can be used by a server whose endpoint doesn't
@@ -65,7 +65,7 @@ pub fn server_url_from_endpoint_url(
                 let _ = url.set_port(None);
             }
         }
-        url.into_string()
+        url.into()
     })
 }
 
@@ -150,15 +150,15 @@ mod tests {
     #[test]
     fn server_url_from_endpoint_url_test() {
         assert_eq!(
-            "opc.tcp://localhost/",
+            "opc.tcp://localhost",
             server_url_from_endpoint_url("opc.tcp://localhost").unwrap()
         );
         assert_eq!(
-            "opc.tcp://localhost/",
+            "opc.tcp://localhost",
             server_url_from_endpoint_url("opc.tcp://localhost:4840").unwrap()
         );
         assert_eq!(
-            "opc.tcp://localhost:4841/",
+            "opc.tcp://localhost:4841",
             server_url_from_endpoint_url("opc.tcp://localhost:4841").unwrap()
         );
         assert_eq!(

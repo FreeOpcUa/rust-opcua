@@ -16,6 +16,10 @@ Read the [change log](./CHANGELOG.md) for changes per version as well as aspirat
 
 This is a fork of [opcua](https://github.com/locka99/opcua) with a broader goal of a generic OPC-UA implementation and a number of different design decisions. See [fork.md](docs/fork.md) for details on this decision and the differences between this library and the original.
 
+# MSRV Policy
+
+We target the latest `stable` rust compiler and make no promises of support for older rust versions. We have use for several recent and upcoming rust features so this is unlikely to change.
+
 # License
 
 The code is licenced under [MPL-2.0](https://opensource.org/licenses/MPL-2.0). Like all open source code, you use this code at your own risk. 

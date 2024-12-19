@@ -1,20 +1,18 @@
 [package]
 name = "opcua-demo-server"
-version = "0.13.0" # OPCUARustVersion
+version = "0.13.0"
 authors = ["Adam Lock <locka99@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-chrono = "0.4"
-log = "0.4"
-rand = "0.7"
+chrono = { workspace = true }
+log = { workspace = true }
+rand = { workspace = true }
 log4rs = "1.2"
-lazy_static = "1.4.0"
 pico-args = "0.5"
-tokio = { version = "1", features = ["full"] }
-tokio-util = "0.7.11"
+tokio = { workspace = true }
+tokio-util = { workspace = true }
 
 [dependencies.opcua]
 path = "../../lib"
-version = "0.13.0" # OPCUARustVersion
 features = ["all"]

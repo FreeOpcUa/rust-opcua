@@ -1,16 +1,15 @@
 [package]
 name = "opcua-simple-server"
-version = "0.13.0" # OPCUARustVersion
+version = "0.13.0"
 authors = ["Adam Lock <locka99@gmail.com>"]
 edition = "2021"
 
 [dependencies]
-chrono = "0.4"
-log = "0.4"
-tokio = { version = "1.38.0", features = ["full"] }
+chrono = { workspace = true }
+log = { workspace = true }
+tokio = { workspace = true }
 
 [dependencies.opcua]
 path = "../../lib"
-version = "0.13.0" # OPCUARustVersion
 features = ["server", "console-logging"]
 default-features = false

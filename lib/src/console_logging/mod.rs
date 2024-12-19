@@ -27,12 +27,10 @@ impl<T: fmt::Display> fmt::Display for Pad<T> {
 /// Initialize config loading by parsing the
 /// `RUST_OPCUA_LOG` environment variable.
 pub fn init() {
-    lazy_static::lazy_static! {
-        static ref INITIALISED: AtomicBool = AtomicBool::new(false);
-    }
+    static INITIALIZED: AtomicBool = AtomicBool::new(false);
 
     // Only need to call this once
-    if !INITIALISED.swap(true, Ordering::Relaxed) {
+    if !INITIALIZED.swap(true, Ordering::Relaxed) {
         // This is env_logger::init() but taking logging values from  instead of RUST_LOG.
         // env_logger/RUST_LOG is used by cargo and other rust tools so console fills with garbage from
         // other processes  when we're only interested in our own garbage!

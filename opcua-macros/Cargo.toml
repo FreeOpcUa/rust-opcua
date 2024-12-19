@@ -22,9 +22,9 @@ name = "opcua_macros"
 proc-macro = true
 
 [dependencies]
-base64 = "0.22.1"
-convert_case = "0.6.0"
-proc-macro2 = "1.0.86"
-quote = "1.0.36"
-syn = { version = "2.0.72", features = ["full"] }
-uuid = "1.10.0"
+base64 = { workspace = true }
+convert_case = { workspace = true }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true }
+uuid = { workspace = true }

@@ -37,9 +37,7 @@ pub enum SessionState {
     Connecting,
 }
 
-lazy_static::lazy_static! {
-    static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
-}
+static NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
 
 /// An OPC-UA session. This session provides methods for all supported services that require an open session.
 ///

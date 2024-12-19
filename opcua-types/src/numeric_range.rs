@@ -7,6 +7,7 @@
 use std::{
     fmt::{self, Display},
     str::FromStr,
+    sync::LazyLock,
 };
 
 use regex::Regex;
@@ -235,10 +236,9 @@ impl NumericRange {
             //
             // To stop insane values, a number must be 10 digits (sufficient for any permissible
             // 32-bit value) or less regardless of leading zeroes.
-            lazy_static::lazy_static! {
-                static ref RE: Regex =
-                    Regex::new("^(?P<min>[0-9]{1,10})(:(?P<max>[0-9]{1,10}))?$").unwrap();
-            }
+            static RE: LazyLock<Regex> = LazyLock::new(|| {
+                Regex::new("^(?P<min>[0-9]{1,10})(:(?P<max>[0-9]{1,10}))?$").unwrap()
+            });
             if let Some(captures) = RE.captures(s) {
                 let min = captures.name("min");
                 let max = captures.name("max");

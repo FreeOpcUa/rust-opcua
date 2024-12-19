@@ -12,7 +12,7 @@ readme = "../README.md"
 documentation = "https://docs.rs/opcua/"
 
 [dependencies]
-chrono = "0.4.38"
-roxmltree = "0.20.0"
+chrono = { workspace = true }
+roxmltree = { workspace = true }
 thiserror = { workspace = true }
-uuid = "1.10.0"
+uuid = { workspace = true }

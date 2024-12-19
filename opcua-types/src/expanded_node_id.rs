@@ -10,6 +10,7 @@ use std::{
     fmt,
     io::{Read, Write},
     str::FromStr,
+    sync::LazyLock,
 };
 
 use crate::{
@@ -432,10 +433,12 @@ impl FromStr for ExpandedNodeId {
         // or
         // svr=<serverindex>;nsu=<uri>;<type>=<value>
 
-        lazy_static::lazy_static! {
-            // Contains capture groups "svr", either "ns" or "nsu" and then "t" for type
-            static ref RE: Regex = Regex::new(r"^svr=(?P<svr>[0-9]+);(ns=(?P<ns>[0-9]+)|nsu=(?P<nsu>[^;]+));(?P<t>[isgb]=.+)$").unwrap();
-        }
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(
+                r"^svr=(?P<svr>[0-9]+);(ns=(?P<ns>[0-9]+)|nsu=(?P<nsu>[^;]+));(?P<t>[isgb]=.+)$",
+            )
+            .unwrap()
+        });
 
         let captures = RE.captures(s).ok_or(StatusCode::BadNodeIdInvalid)?;
 

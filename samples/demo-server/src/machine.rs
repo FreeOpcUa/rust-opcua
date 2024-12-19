@@ -4,7 +4,7 @@
 
 use std::{
     sync::{
-        atomic::{AtomicU16, AtomicU32, Ordering},
+        atomic::{AtomicU16, Ordering},
         Arc,
     },
     time::Duration,
@@ -180,10 +180,6 @@ fn add_machine(
 pub struct MachineCycledEventType {
     base: BaseEventType,
     own_namespace_index: u16,
-}
-
-lazy_static! {
-    static ref MACHINE_CYCLED_EVENT_ID: AtomicU32 = AtomicU32::new(1);
 }
 
 impl MachineCycledEventType {

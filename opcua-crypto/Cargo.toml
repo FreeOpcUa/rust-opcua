@@ -19,7 +19,6 @@ name = "opcua_crypto"
 log = { workspace = true }
 gethostname = { workspace = true }
 chrono = { workspace = true }
-foreign-types = { workspace = true }
 serde = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }

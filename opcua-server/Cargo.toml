@@ -34,7 +34,6 @@ bitflags = { workspace = true }
 chrono = { workspace = true }
 futures = { workspace = true }
 hashbrown = { workspace = true }
-lazy_static = { workspace = true }
 log = { workspace = true }
 parking_lot = { workspace = true }
 regex = { workspace = true }
@@ -42,6 +41,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
+postcard = { workspace = true }
 
 
 opcua-types = { path = "../opcua-types" }
@@ -51,4 +51,3 @@ opcua-nodes = { path = "../opcua-nodes" }
 
 opcua-client = { path = "../opcua-client", optional = true }
 opcua-core-namespace = { path = "../opcua-core-namespace", optional = true }
-postcard = { version = "1.0.10", features = ["use-std"] }

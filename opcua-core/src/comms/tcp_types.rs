@@ -525,7 +525,7 @@ mod tests {
         };
 
         let endpoints = vec![EndpointDescription {
-            endpoint_url: UAString::from("opc.tcp://foo"),
+            endpoint_url: UAString::from("opc.tcp://foo/"),
             security_policy_uri: UAString::null(),
             security_mode: MessageSecurityMode::None,
             server: ApplicationDescription::default(),

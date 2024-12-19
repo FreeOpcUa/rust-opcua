@@ -170,12 +170,10 @@ pub fn scalar_random_value(id: DataTypeId) -> Variant {
         DataTypeId::String => {
             let s = (0..10)
                 .map(|_| rng.sample(Alphanumeric))
-                .collect::<String>();
-            UAString::from(s).into()
+                .collect::<Vec<_>>();
+            UAString::from(String::from_utf8(s).unwrap()).into()
         }
-        DataTypeId::DateTime => {
-            DateTime::from(rng.gen_range::<i64, i64, i64>(0, DateTime::endtimes_ticks())).into()
-        }
+        DataTypeId::DateTime => DateTime::from(rng.gen_range(0..DateTime::endtimes_ticks())).into(),
         DataTypeId::Guid => Guid::new().into(),
         _ => scalar_default_value(id),
     }

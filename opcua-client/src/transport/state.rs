@@ -1,5 +1,5 @@
 use std::{
-    sync::{atomic::AtomicU32, Arc},
+    sync::Arc,
     time::{Duration, Instant},
 };
 
@@ -19,10 +19,6 @@ use opcua_types::{
 };
 
 pub(crate) type RequestSend = tokio::sync::mpsc::Sender<OutgoingMessage>;
-
-lazy_static::lazy_static! {
-    static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
-}
 
 pub struct SecureChannelState {
     /// Time offset between the client and the server.

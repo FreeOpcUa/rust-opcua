@@ -7,6 +7,8 @@
 //! Functions are implemented on the `RelativePath` and `RelativePathElement` structs where
 //! there are most useful.
 
+use std::sync::LazyLock;
+
 use log::error;
 use regex::Regex;
 
@@ -231,9 +233,9 @@ impl RelativePathElement {
     where
         CB: Fn(u16, &str) -> Option<NodeId>,
     {
-        lazy_static::lazy_static! {
-            static ref RE: Regex = Regex::new(r"(?P<reftype>/|\.|(<(?P<flags>#|!|#!)?((?P<nsidx>[0-9]+):)?(?P<name>[^#!].*)>))(?P<target>.*)").unwrap();
-        }
+        static RE: LazyLock<Regex> = LazyLock::new(|| {
+            Regex::new(r"(?P<reftype>/|\.|(<(?P<flags>#|!|#!)?((?P<nsidx>[0-9]+):)?(?P<name>[^#!].*)>))(?P<target>.*)").unwrap()
+        });
 
         // NOTE: This could be more safely done with a parser library, e.g. nom.
 
@@ -397,9 +399,8 @@ fn unescape_browse_name(name: &str) -> String {
 /// * bar
 ///
 fn target_name(target_name: &str) -> Result<QualifiedName, RelativePathError> {
-    lazy_static::lazy_static! {
-        static ref RE: Regex = Regex::new(r"((?P<nsidx>[0-9+]):)?(?P<name>.*)").unwrap();
-    }
+    static RE: LazyLock<Regex> =
+        LazyLock::new(|| Regex::new(r"((?P<nsidx>[0-9+]):)?(?P<name>.*)").unwrap());
     if let Some(captures) = RE.captures(target_name) {
         let namespace = if let Some(namespace) = captures.name("nsidx") {
             if let Ok(namespace) = namespace.as_str().parse::<u16>() {

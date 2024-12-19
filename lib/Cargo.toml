@@ -44,8 +44,7 @@ xml = ["opcua-types/xml", "opcua-nodes/xml"]
 [dependencies]
 chrono = { workspace = true }
 env_logger = { version = "0.10", optional = true }
-lazy_static = { workspace = true }
-log = "0.4"
+log = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }
 opcua-crypto = { path = "../opcua-crypto" }

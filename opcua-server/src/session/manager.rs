@@ -22,9 +22,7 @@ use opcua_types::{
 
 use super::{instance::Session, message_handler::MessageHandler};
 
-lazy_static::lazy_static! {
-    static ref NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
-}
+static NEXT_SESSION_ID: AtomicU32 = AtomicU32::new(1);
 
 pub(super) fn next_session_id() -> (NodeId, u32) {
     // Session id will be a string identifier
