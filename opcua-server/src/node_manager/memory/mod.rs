@@ -3,7 +3,7 @@
 //! details to a type implementing [InMemoryNodeManagerImpl].
 
 mod diagnostics;
-mod implementation;
+mod memory_mgr_impl;
 mod simple;
 
 #[cfg(feature = "generated-address-space")]
@@ -13,8 +13,8 @@ mod core;
 pub use core::{CoreNodeManager, CoreNodeManagerBuilder, CoreNodeManagerImpl};
 
 pub use diagnostics::{DiagnosticsNodeManager, DiagnosticsNodeManagerBuilder, NamespaceMetadata};
-pub use implementation::*;
 use log::warn;
+pub use memory_mgr_impl::*;
 use opcua_core::{trace_read_lock, trace_write_lock};
 pub use simple::*;
 
