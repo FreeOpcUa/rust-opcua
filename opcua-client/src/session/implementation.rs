@@ -59,6 +59,8 @@ pub struct Session {
     pub(super) request_timeout: Duration,
     pub(super) publish_timeout: Duration,
     pub(super) recreate_monitored_items_chunk: usize,
+    pub(super) recreate_subscriptions: bool,
+    pub(super) should_reconnect: AtomicBool,
     pub(super) session_timeout: f64,
     /// Reference to the subscription cache for the client.
     pub subscription_state: Mutex<SubscriptionState>,
@@ -67,8 +69,6 @@ pub struct Session {
     pub(super) monitored_item_handle: AtomicHandle,
     pub(super) trigger_publish_tx: tokio::sync::watch::Sender<Instant>,
     decoding_options: DecodingOptions,
-    pub(super) should_reconnect: AtomicBool,
-    pub(super) auto_recreate_subscriptions: bool,
     pub(super) encoding_context: Arc<RwLock<ContextOwned>>,
 }
 
@@ -133,6 +133,8 @@ impl Session {
             session_timeout: config.session_timeout as f64,
             publish_timeout: config.publish_timeout,
             recreate_monitored_items_chunk: config.performance.recreate_monitored_items_chunk,
+            recreate_subscriptions: config.recreate_subscriptions,
+            should_reconnect: AtomicBool::new(true),
             subscription_state: Mutex::new(SubscriptionState::new(
                 config.min_publish_interval,
                 publish_limits_watch_tx.clone(),
@@ -142,8 +144,6 @@ impl Session {
             publish_limits_watch_tx,
             trigger_publish_tx,
             decoding_options,
-            should_reconnect: AtomicBool::new(true),
-            auto_recreate_subscriptions: config.auto_recreate_subscriptions,
             encoding_context,
         });
 

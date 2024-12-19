@@ -244,10 +244,13 @@ pub struct ClientConfig {
     pub(crate) preferred_locales: Vec<String>,
     /// Identifier of the default endpoint
     pub(crate) default_endpoint: String,
-    /// User tokens
-    pub(crate) user_tokens: BTreeMap<String, ClientUserToken>,
     /// List of end points
     pub(crate) endpoints: BTreeMap<String, ClientEndpoint>,
+    /// User tokens
+    pub(crate) user_tokens: BTreeMap<String, ClientUserToken>,
+    /// Requested channel lifetime in milliseconds.
+    #[serde(default = "defaults::channel_lifetime")]
+    pub(crate) channel_lifetime: u32,
     /// Decoding options used for serialization / deserialization
     #[serde(default)]
     pub(crate) decoding_options: DecodingOptions,
@@ -284,22 +287,17 @@ pub struct ClientConfig {
     #[serde(default = "defaults::min_publish_interval")]
     pub(crate) min_publish_interval: Duration,
 
+    /// Client performance settings
+    pub(crate) performance: Performance,
+    /// Automatically recreate subscriptions on reconnect, by first calling
+    /// `transfer_subscriptions`, then attempting to recreate subscriptions if that fails.
+    #[serde(default = "defaults::recreate_subscriptions")]
+    pub(crate) recreate_subscriptions: bool,
+    /// Session name
+    pub(crate) session_name: String,
     /// Requested session timeout in milliseconds
     #[serde(default = "defaults::session_timeout")]
     pub(crate) session_timeout: u32,
-
-    /// Client performance settings
-    pub(crate) performance: Performance,
-    /// Session name
-    pub(crate) session_name: String,
-
-    /// Requested channel lifetime in milliseconds.
-    #[serde(default = "defaults::channel_lifetime")]
-    pub(crate) channel_lifetime: u32,
-    /// Automatically recreate subscriptions on reconnect, by first calling
-    /// `transfer_subscriptions`, then attempting to recreate subscriptions if that fails.
-    #[serde(default = "defaults::auto_recreate_subscriptions")]
-    pub(crate) auto_recreate_subscriptions: bool,
 }
 
 impl Config for ClientConfig {
@@ -480,6 +478,10 @@ mod defaults {
         true
     }
 
+    pub fn channel_lifetime() -> u32 {
+        60_000
+    }
+
     pub fn session_retry_limit() -> i32 {
         SessionRetryPolicy::DEFAULT_RETRY_LIMIT as i32
     }
@@ -496,28 +498,24 @@ mod defaults {
         Duration::from_secs(10)
     }
 
-    pub fn max_failed_keep_alive_count() -> u64 {
-        0
+    pub fn max_array_length() -> usize {
+        opcua_types::constants::MAX_ARRAY_LENGTH
     }
 
-    pub fn request_timeout() -> Duration {
-        Duration::from_secs(60)
+    pub fn max_byte_string_length() -> usize {
+        opcua_types::constants::MAX_BYTE_STRING_LENGTH
     }
 
-    pub fn min_publish_interval() -> Duration {
-        Duration::from_millis(100)
-    }
-
-    pub fn publish_timeout() -> Duration {
-        Duration::from_secs(60)
-    }
-
-    pub fn session_timeout() -> u32 {
-        60_000
+    pub fn max_chunk_count() -> usize {
+        opcua_types::constants::MAX_CHUNK_COUNT
     }
 
     pub fn max_chunk_size() -> usize {
         65535
+    }
+
+    pub fn max_failed_keep_alive_count() -> u64 {
+        0
     }
 
     pub fn max_incoming_chunk_size() -> usize {
@@ -528,32 +526,32 @@ mod defaults {
         opcua_types::constants::MAX_MESSAGE_SIZE
     }
 
-    pub fn max_chunk_count() -> usize {
-        opcua_types::constants::MAX_CHUNK_COUNT
-    }
-
     pub fn max_string_length() -> usize {
         opcua_types::constants::MAX_STRING_LENGTH
     }
 
-    pub fn max_byte_string_length() -> usize {
-        opcua_types::constants::MAX_BYTE_STRING_LENGTH
+    pub fn request_timeout() -> Duration {
+        Duration::from_secs(60)
     }
 
-    pub fn max_array_length() -> usize {
-        opcua_types::constants::MAX_ARRAY_LENGTH
+    pub fn publish_timeout() -> Duration {
+        Duration::from_secs(60)
+    }
+
+    pub fn min_publish_interval() -> Duration {
+        Duration::from_millis(100)
     }
 
     pub fn recreate_monitored_items_chunk() -> usize {
         1000
     }
 
-    pub fn channel_lifetime() -> u32 {
-        60_000
+    pub fn recreate_subscriptions() -> bool {
+        true
     }
 
-    pub fn auto_recreate_subscriptions() -> bool {
-        true
+    pub fn session_timeout() -> u32 {
+        60_000
     }
 }
 
@@ -569,31 +567,31 @@ impl ClientConfig {
         ClientConfig {
             application_name: application_name.into(),
             application_uri: application_uri.into(),
+            product_uri: String::new(),
             create_sample_keypair: false,
             certificate_path: None,
             private_key_path: None,
             trust_server_certs: false,
             verify_server_certs: defaults::verify_server_certs(),
-            product_uri: String::new(),
             pki_dir,
             preferred_locales: Vec::new(),
             default_endpoint: String::new(),
-            user_tokens: BTreeMap::new(),
             endpoints: BTreeMap::new(),
+            user_tokens: BTreeMap::new(),
+            channel_lifetime: defaults::channel_lifetime(),
+            decoding_options: DecodingOptions::default(),
             session_retry_limit: defaults::session_retry_limit(),
             session_retry_initial: defaults::session_retry_initial(),
             session_retry_max: defaults::session_retry_max(),
             keep_alive_interval: defaults::keep_alive_interval(),
-            request_timeout: defaults::request_timeout(),
-            min_publish_interval: defaults::min_publish_interval(),
-            publish_timeout: defaults::publish_timeout(),
-            session_timeout: defaults::session_timeout(),
-            decoding_options: DecodingOptions::default(),
-            performance: Performance::default(),
-            session_name: "Rust OPC UA Client".into(),
             max_failed_keep_alive_count: defaults::max_failed_keep_alive_count(),
-            channel_lifetime: defaults::channel_lifetime(),
-            auto_recreate_subscriptions: defaults::auto_recreate_subscriptions(),
+            request_timeout: defaults::request_timeout(),
+            publish_timeout: defaults::publish_timeout(),
+            min_publish_interval: defaults::min_publish_interval(),
+            performance: Performance::default(),
+            recreate_subscriptions: defaults::recreate_subscriptions(),
+            session_name: "Rust OPC UA Client".into(),
+            session_timeout: defaults::session_timeout(),
         }
     }
 }
