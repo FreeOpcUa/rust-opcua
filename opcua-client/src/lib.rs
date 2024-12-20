@@ -116,6 +116,7 @@
 pub mod browser;
 mod builder;
 mod config;
+pub mod custom_types;
 mod retry;
 mod session;
 mod transport;

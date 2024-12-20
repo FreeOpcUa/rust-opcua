@@ -287,7 +287,7 @@ impl Session {
     /// Note that there is no mechanism to ensure uniqueness,
     /// you should avoid adding the same type loader more than once, it will
     /// work, but there will be a small performance overhead.
-    pub fn add_type_loader(&mut self, type_loader: Arc<dyn TypeLoader>) {
+    pub fn add_type_loader(&self, type_loader: Arc<dyn TypeLoader>) {
         self.encoding_context.write().loaders_mut().add(type_loader);
     }
 

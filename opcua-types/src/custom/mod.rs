@@ -8,5 +8,6 @@ mod type_tree;
 
 pub use custom_struct::{DynamicStructure, DynamicTypeLoader};
 pub use type_tree::{
-    DataTypeTree, EncodingIds, EnumTypeInfo, ParentIds, ParsedStructureField, StructTypeInfo,
+    DataTypeTree, DataTypeVariant, EncodingIds, EnumTypeInfo, ParentIds, ParsedStructureField,
+    StructTypeInfo, TypeInfo, TypeInfoRef,
 };

@@ -28,6 +28,7 @@ mod transport;
 
 pub use builder::ServerBuilder;
 pub use config::*;
+pub use info::ServerInfo;
 pub use opcua_types::event_field::EventField;
 pub use server::Server;
 pub use server_handle::ServerHandle;

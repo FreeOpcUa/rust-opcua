@@ -34,6 +34,7 @@ pub fn base_ignored_types() -> HashSet<String> {
         "ViewNode",
         "DataTypeNode",
         "ReferenceNode",
+        "Enumeration",
     ]
     .into_iter()
     .map(|v| v.to_owned())
@@ -114,6 +115,7 @@ pub fn base_native_type_mappings() -> HashMap<String, String> {
         ("UInt64", "u64"),
         ("Float", "f32"),
         ("Double", "f64"),
+        ("Enumeration", "i32"),
     ]
     .into_iter()
     .map(|(k, v)| (k.to_owned(), v.to_owned()))

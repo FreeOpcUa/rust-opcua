@@ -25,7 +25,7 @@ use opcua_types::{
 };
 use opcua_types::{
     ByteString, ContextOwned, DateTime, DecodingOptions, Error, ExtensionObject, LocalizedText,
-    MessageSecurityMode, NamespaceMap, TypeLoaderCollection, UAString,
+    MessageSecurityMode, NamespaceMap, TypeLoader, TypeLoaderCollection, UAString,
 };
 
 use crate::config::{ServerConfig, ServerEndpoint};
@@ -84,7 +84,7 @@ pub struct ServerInfo {
     /// Currently active local port.
     pub port: AtomicU16,
     /// List of active type loaders
-    pub type_loaders: TypeLoaderCollection,
+    pub type_loaders: RwLock<TypeLoaderCollection>,
 }
 
 impl ServerInfo {
@@ -537,9 +537,17 @@ impl ServerInfo {
         // The namespace map is populated later, once the session is connected.
         ContextOwned::new(
             NamespaceMap::new(),
-            self.type_loaders.clone(),
+            self.type_loaders.read().clone(),
             self.decoding_options(),
         )
+    }
+
+    /// Add a type loader to the server.
+    /// Note that there is no mechanism to ensure uniqueness,
+    /// you should avoid adding the same type loader more than once, it will
+    /// work, but there will be a small performance overhead.
+    pub fn add_type_loader(&self, type_loader: Arc<dyn TypeLoader>) {
+        self.type_loaders.write().add(type_loader);
     }
 
     /* pub(crate) fn raise_and_log<T>(&self, event: T) -> Result<NodeId, ()>

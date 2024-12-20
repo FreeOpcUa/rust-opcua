@@ -255,6 +255,12 @@ impl BinaryEncodable for DynamicStructure {
                 };
                 size += self.field_variant_len(value, field, ctx);
             }
+            StructureType::StructureWithSubtypedValues => {
+                todo!("StructureWithSubtypedValues is unsupported")
+            }
+            StructureType::UnionWithSubtypedValues => {
+                todo!("UnionWithSubtypedValues is unsupported")
+            }
         }
 
         size
@@ -298,6 +304,12 @@ impl BinaryEncodable for DynamicStructure {
                 };
 
                 self.encode_field(stream, value, field, ctx)?;
+            }
+            StructureType::StructureWithSubtypedValues => {
+                todo!("StructureWithSubtypedValues is unsupported")
+            }
+            StructureType::UnionWithSubtypedValues => {
+                todo!("UnionWithSubtypedValues is unsupported")
             }
         }
 
@@ -531,6 +543,12 @@ impl DynamicTypeLoader {
                     type_tree: self.type_tree.clone(),
                     data: values,
                 }))
+            }
+            StructureType::StructureWithSubtypedValues => {
+                todo!("StructureWithSubtypedValues is unsupported")
+            }
+            StructureType::UnionWithSubtypedValues => {
+                todo!("UnionWithSubtypedValues is unsupported")
             }
         }
     }
