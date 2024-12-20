@@ -4,7 +4,6 @@ This is a list of things that are known to be missing, or ideas that could be im
 
  - Flesh out the server and client SDK with tooling for ease if use.
    - Make it even easier to implement custom node managers.
-   - Automate fetching data type definitions from the server for custom structs.
  - Support for StructureWithOptionalFields and Union in the encoding macros.
  - Implement Part 4 7.41.2.3, encrypted secrets. We currently only support legacy secrets. We should also support more encryption algorithms for secrets.
  - Write some form of support for IssuedToken based authentication on the client.
@@ -15,3 +14,5 @@ This is a list of things that are known to be missing, or ideas that could be im
  - Write a framework for method calls. The foundation for this has been laid with `TryFromVariant`, if we really wanted to we could use clever trait magic to let users simply define a rust method that takes in values that each implement a trait `MethodArg`, with a blanket impl for `TryFromVariant`, and return a tuple of results. Could be really powerful, but methods are a little niche.
  - Implement `Query`. I never got around to this, because the service is just so complex. Currently there is no way to actually implement it, since it won't work unless _all_ node managers implement it, and the core node managers don't.
  - Look into running certain services concurrently. Currently they are sequential because that makes everything much simpler, but the services that don't have any cross node-manager interaction could run on all node managers concurrently.
+ - Use NodeSet2 file for types code gen instead of the .bsd file. There is some info here (like data types being abstract), that you can't get from anywhere else.
+   - In general, the codegen could use some more work. The current approach isn't really ideal. We should probably unify all the different code gen targets, since they generally depend on a lot of the same data and we risk reading the same data multiple times.
