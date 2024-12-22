@@ -1,8 +1,8 @@
 //! Implementation of the [`DataTypeDefinition`] enum, and some utilities related to this.
 
-use crate::{match_extension_object_owned, DataTypeId, MessageInfo};
+use crate::match_extension_object_owned;
 
-use super::{EnumDefinition, ExtensionObject, ObjectId, StatusCode, StructureDefinition, Variant};
+use super::{EnumDefinition, ExtensionObject, StatusCode, StructureDefinition, Variant};
 
 #[derive(Debug, Clone)]
 /// Type for an OPC UA data type definition.
@@ -22,43 +22,6 @@ impl From<StructureDefinition> for DataTypeDefinition {
 impl From<EnumDefinition> for DataTypeDefinition {
     fn from(value: EnumDefinition) -> Self {
         Self::Enum(value)
-    }
-}
-
-// TODO: Figure out why we don't auto generate these.
-impl MessageInfo for StructureDefinition {
-    fn type_id(&self) -> ObjectId {
-        ObjectId::StructureDefinition_Encoding_DefaultBinary
-    }
-
-    fn json_type_id(&self) -> ObjectId {
-        ObjectId::StructureDefinition_Encoding_DefaultJson
-    }
-
-    fn xml_type_id(&self) -> ObjectId {
-        ObjectId::StructureDefinition_Encoding_DefaultXml
-    }
-
-    fn data_type_id(&self) -> crate::DataTypeId {
-        DataTypeId::StructureDefinition
-    }
-}
-
-impl MessageInfo for EnumDefinition {
-    fn type_id(&self) -> ObjectId {
-        ObjectId::EnumDefinition_Encoding_DefaultBinary
-    }
-
-    fn json_type_id(&self) -> ObjectId {
-        ObjectId::EnumDefinition_Encoding_DefaultJson
-    }
-
-    fn xml_type_id(&self) -> ObjectId {
-        ObjectId::EnumDefinition_Encoding_DefaultXml
-    }
-
-    fn data_type_id(&self) -> DataTypeId {
-        DataTypeId::EnumDefinition
     }
 }
 

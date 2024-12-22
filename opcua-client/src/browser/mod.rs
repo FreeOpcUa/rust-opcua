@@ -53,11 +53,63 @@ pub use result::{BrowserResult, NodeDescription};
 
 use crate::{RequestRetryPolicy, Session};
 
-struct BrowserConfig {
+/// Configuration for the browser
+#[derive(Debug, Clone)]
+pub struct BrowserConfig {
     max_nodes_per_request: usize,
     max_references_per_node: u32,
     max_concurrent_requests: usize,
     max_continuation_point_retries: usize,
+}
+
+impl BrowserConfig {
+    /// Create a new default browser config.
+    pub fn new() -> Self {
+        Self::default()
+    }
+
+    /// Set the maximum number of nodes per request sent to the server.
+    ///
+    /// Note that the browser makes no guarantee that all requests sent
+    /// will be as large as possible.
+    pub fn max_nodes_per_request(mut self, max_nodes_per_request: usize) -> Self {
+        self.max_nodes_per_request = max_nodes_per_request;
+        self
+    }
+
+    /// Set the maximum number of references requested per node.
+    /// Can be 0 to let the server decide.
+    pub fn max_references_per_node(mut self, max_references_per_node: u32) -> Self {
+        self.max_references_per_node = max_references_per_node;
+        self
+    }
+
+    /// Set the maximum number of concurrent requests. Defaults to 1.
+    pub fn max_concurrent_requests(mut self, max_concurrent_requests: usize) -> Self {
+        self.max_concurrent_requests = max_concurrent_requests;
+        self
+    }
+
+    /// Set the maximum number of times a browse will be retried if the
+    /// continuation point becomes invalid while the browser is running.
+    ///
+    /// This will start the browse process over from zero for the affected node,
+    /// meaning that the same references will be returned multiple times.
+    pub fn max_continuation_point_retries(mut self, max_continuation_point_retries: usize) -> Self {
+        self.max_continuation_point_retries = max_continuation_point_retries;
+        self
+    }
+}
+
+impl Default for BrowserConfig {
+    fn default() -> Self {
+        Self {
+            max_nodes_per_request: 100,
+            max_references_per_node: 1000,
+            max_concurrent_requests: 1,
+            max_continuation_point_retries: 0,
+        }
+    }
 }
 
 #[derive(Debug, Default, Clone)]
@@ -135,6 +187,16 @@ where
     }
 }
 
+/// Browse policy that browses nothing except the root nodes.
+#[derive(Debug, Clone, Copy)]
+pub struct NoneBrowserPolicy;
+
+impl BrowserPolicy for NoneBrowserPolicy {
+    fn get_next(&self, _results: &BrowseResultItem) -> Vec<BrowseDescription> {
+        Vec::new()
+    }
+}
+
 /// Simple filter for the [Browser]. All discovered nodes
 /// will be recursively browsed using the stored configuration.
 #[derive(Debug, Clone)]
@@ -144,10 +206,15 @@ pub struct BrowseFilter {
     result_mask: BrowseResultMaskFlags,
     node_class_mask: NodeClassMask,
     reference_type_id: NodeId,
+    max_depth: usize,
 }
 
 impl BrowserPolicy for BrowseFilter {
     fn get_next(&self, results: &BrowseResultItem) -> Vec<BrowseDescription> {
+        if self.max_depth > 0 && results.depth() >= self.max_depth {
+            return Vec::new();
+        }
+
         results
             .references
             .iter()
@@ -172,6 +239,7 @@ impl BrowseFilter {
             include_subtypes,
             result_mask: BrowseResultMaskFlags::all(),
             node_class_mask: NodeClassMask::all(),
+            max_depth: 0,
         }
     }
 
@@ -209,6 +277,13 @@ impl BrowseFilter {
         self.result_mask = mask;
         self
     }
+
+    /// Set the maximum browse depth. If this is 1 only the root nodes will be browsed,
+    /// if it is 0, there is no upper limit.
+    pub fn max_depth(mut self, depth: usize) -> Self {
+        self.max_depth = depth;
+        self
+    }
 }
 
 /// A utility for recursively discovering nodes on an OPC-UA server.
@@ -227,12 +302,7 @@ impl<'a, T, R> Browser<'a, T, R> {
             session,
             handler,
             retry_policy,
-            config: BrowserConfig {
-                max_nodes_per_request: 100,
-                max_references_per_node: 1000,
-                max_concurrent_requests: 1,
-                max_continuation_point_retries: 0,
-            },
+            config: BrowserConfig::default(),
             token: CancellationToken::new(),
         }
     }
@@ -304,6 +374,12 @@ impl<'a, T, R> Browser<'a, T, R> {
     /// meaning that the same references will be returned multiple times.
     pub fn max_continuation_point_retries(mut self, max_continuation_point_retries: usize) -> Self {
         self.config.max_continuation_point_retries = max_continuation_point_retries;
+        self
+    }
+
+    /// Set the browse configuration.
+    pub fn config(mut self, config: BrowserConfig) -> Self {
+        self.config = config;
         self
     }
 }

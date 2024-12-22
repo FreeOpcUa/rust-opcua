@@ -101,7 +101,7 @@ impl SessionConnector {
             }
         };
 
-        if self.inner.auto_recreate_subscriptions {
+        if self.inner.recreate_subscriptions {
             self.inner.transfer_subscriptions_from_old_session().await;
         }
 

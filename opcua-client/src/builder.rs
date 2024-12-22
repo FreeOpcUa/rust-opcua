@@ -158,45 +158,11 @@ impl ClientBuilder {
         self
     }
 
-    /// Sets the maximum outgoing message size in bytes. 0 means no limit.
-    pub fn max_message_size(mut self, max_message_size: usize) -> Self {
-        self.config.decoding_options.max_message_size = max_message_size;
-        self
-    }
-
-    /// Sets the maximum number of chunks in an outgoing message. 0 means no limit.
-    pub fn max_chunk_count(mut self, max_chunk_count: usize) -> Self {
-        self.config.decoding_options.max_chunk_count = max_chunk_count;
-        self
-    }
-
-    /// Maximum size of each individual outgoing message chunk.
-    pub fn max_chunk_size(mut self, max_chunk_size: usize) -> Self {
-        self.config.decoding_options.max_chunk_size = max_chunk_size;
-        self
-    }
-
-    /// Maximum size of each incoming chunk.
-    pub fn max_incoming_chunk_size(mut self, max_incoming_chunk_size: usize) -> Self {
-        self.config.decoding_options.max_incoming_chunk_size = max_incoming_chunk_size;
-        self
-    }
-
-    /// Maximum length in bytes of a string. 0 actually means 0, i.e. no string permitted.
-    pub fn max_string_length(mut self, max_string_length: usize) -> Self {
-        self.config.decoding_options.max_string_length = max_string_length;
-        self
-    }
-
-    /// Maximum length in bytes of a byte string. 0 actually means 0, i.e. no byte strings permitted.
-    pub fn max_byte_string_length(mut self, max_byte_string_length: usize) -> Self {
-        self.config.decoding_options.max_byte_string_length = max_byte_string_length;
-        self
-    }
-
-    /// Maximum number of array elements. 0 actually means 0, i.e. no array permitted
-    pub fn max_array_length(mut self, max_array_length: usize) -> Self {
-        self.config.decoding_options.max_array_length = max_array_length;
+    /// Requested secure channel token lifetime, in milliseconds.
+    /// The channel will be renewed once 3/4 of the
+    /// lifetime has elapsed. Setting this too low is likely to cause issues.
+    pub fn channel_lifetime(mut self, channel_lifetime: u32) -> Self {
+        self.config.channel_lifetime = channel_lifetime;
         self
     }
 
@@ -232,6 +198,48 @@ impl ClientBuilder {
         self
     }
 
+    /// Maximum number of array elements. 0 actually means 0, i.e. no array permitted
+    pub fn max_array_length(mut self, max_array_length: usize) -> Self {
+        self.config.decoding_options.max_array_length = max_array_length;
+        self
+    }
+
+    /// Maximum length in bytes of a byte string. 0 actually means 0, i.e. no byte strings permitted.
+    pub fn max_byte_string_length(mut self, max_byte_string_length: usize) -> Self {
+        self.config.decoding_options.max_byte_string_length = max_byte_string_length;
+        self
+    }
+
+    /// Sets the maximum number of chunks in an outgoing message. 0 means no limit.
+    pub fn max_chunk_count(mut self, max_chunk_count: usize) -> Self {
+        self.config.decoding_options.max_chunk_count = max_chunk_count;
+        self
+    }
+
+    /// Maximum size of each individual outgoing message chunk.
+    pub fn max_chunk_size(mut self, max_chunk_size: usize) -> Self {
+        self.config.decoding_options.max_chunk_size = max_chunk_size;
+        self
+    }
+
+    /// Maximum size of each incoming chunk.
+    pub fn max_incoming_chunk_size(mut self, max_incoming_chunk_size: usize) -> Self {
+        self.config.decoding_options.max_incoming_chunk_size = max_incoming_chunk_size;
+        self
+    }
+
+    /// Sets the maximum outgoing message size in bytes. 0 means no limit.
+    pub fn max_message_size(mut self, max_message_size: usize) -> Self {
+        self.config.decoding_options.max_message_size = max_message_size;
+        self
+    }
+
+    /// Maximum length in bytes of a string. 0 actually means 0, i.e. no string permitted.
+    pub fn max_string_length(mut self, max_string_length: usize) -> Self {
+        self.config.decoding_options.max_string_length = max_string_length;
+        self
+    }
+
     /// Maximum number of failed keep alives before the client will be forcibly closed.
     /// Set this to zero to never close the connection due to failed keepalives.
     ///
@@ -261,12 +269,6 @@ impl ClientBuilder {
         self
     }
 
-    /// Sets the session timeout period, in milliseconds.
-    pub fn session_timeout(mut self, session_timeout: u32) -> Self {
-        self.config.session_timeout = session_timeout;
-        self
-    }
-
     /// Sets whether the client should ignore clock skew so the client can make a successful
     /// connection to the server, even when the client and server clocks are out of sync.
     pub fn ignore_clock_skew(mut self, ignore_clock_skew: bool) -> Self {
@@ -282,28 +284,26 @@ impl ClientBuilder {
         self
     }
 
-    /// Session name - the default name to use for a new session
-    pub fn session_name(mut self, session_name: impl Into<String>) -> Self {
-        self.config.session_name = session_name.into();
-        self
-    }
-
-    /// Requested secure channel token lifetime, in milliseconds.
-    /// The channel will be renewed once 3/4 of the
-    /// lifetime has elapsed. Setting this too low is likely to cause issues.
-    pub fn channel_lifetime(mut self, channel_lifetime: u32) -> Self {
-        self.config.channel_lifetime = channel_lifetime;
-        self
-    }
-
     /// Automatically recreate subscriptions on reconnect, by first calling
     /// [`crate::Session::transfer_subscriptions`], then attempting to recreate
     /// subscriptions if that fails.
     ///
     /// Defaults to `true`. Note that if you disable this feature, you will need to
     /// handle cleanup of the subscriptions in the session yourself.
-    pub fn auto_recreate_subscriptions(mut self, auto_recreate_subscriptions: bool) -> Self {
-        self.config.auto_recreate_subscriptions = auto_recreate_subscriptions;
+    pub fn recreate_subscriptions(mut self, recreate_subscriptions: bool) -> Self {
+        self.config.recreate_subscriptions = recreate_subscriptions;
+        self
+    }
+
+    /// Session name - the default name to use for a new session
+    pub fn session_name(mut self, session_name: impl Into<String>) -> Self {
+        self.config.session_name = session_name.into();
+        self
+    }
+
+    /// Sets the session timeout period, in milliseconds.
+    pub fn session_timeout(mut self, session_timeout: u32) -> Self {
+        self.config.session_timeout = session_timeout;
         self
     }
 }

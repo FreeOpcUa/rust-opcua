@@ -161,7 +161,7 @@ impl Server {
             type_tree_getter: builder
                 .type_tree_getter
                 .unwrap_or_else(|| Arc::new(DefaultTypeTreeGetter)),
-            type_loaders: builder.type_loaders,
+            type_loaders: RwLock::new(builder.type_loaders),
         };
 
         let certificate_store = Arc::new(RwLock::new(certificate_store));

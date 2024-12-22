@@ -11,7 +11,7 @@ use crate::{
     },
     Array, ByteString, Context, DataValue, DateTime, DiagnosticInfo, DynEncodable, EncodingResult,
     Error, ExpandedNodeId, ExtensionObject, Guid, LocalizedText, NodeId, QualifiedName, StatusCode,
-    UAString, Variant, XmlElement,
+    StructureType, UAString, Variant, XmlElement,
 };
 
 use super::{
@@ -383,6 +383,13 @@ impl DynamicTypeLoader {
                     data: vec![value],
                 }))
             }
+
+            StructureType::StructureWithSubtypedValues => {
+                todo!("StructureWithSubtypedValues is unsupported")
+            }
+            StructureType::UnionWithSubtypedValues => {
+                todo!("UnionWithSubtypedValues is unsupported")
+            }
         }
     }
 }
@@ -431,6 +438,13 @@ impl JsonEncodable for DynamicStructure {
                 };
                 stream.name("Value")?;
                 self.json_encode_field(stream, value, field, ctx)?;
+            }
+
+            StructureType::StructureWithSubtypedValues => {
+                todo!("StructureWithSubtypedValues is unsupported")
+            }
+            StructureType::UnionWithSubtypedValues => {
+                todo!("UnionWithSubtypedValues is unsupported")
             }
         }
         stream.end_object()?;

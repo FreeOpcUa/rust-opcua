@@ -114,7 +114,7 @@ impl StructTypeInfo {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 /// Encoding IDs for a structure type.
 pub struct EncodingIds {
     /// Binary encoding ID.
@@ -137,16 +137,24 @@ impl GenericTypeInfo {
 }
 
 #[derive(Debug)]
+/// Structure describing a data type on the server.
 pub enum TypeInfo {
+    /// Description of an enum data type.
     Enum(Arc<EnumTypeInfo>),
+    /// Description of a structure data type.
     Struct(Arc<StructTypeInfo>),
+    /// Description of a primitive data type.
     Primitive(Arc<GenericTypeInfo>),
 }
 
 #[derive(Debug)]
+/// Reference to a `TypeInfo`.
 pub enum TypeInfoRef<'a> {
+    /// Description of an enum data type.
     Enum(&'a Arc<EnumTypeInfo>),
+    /// Description of a structure data type.
     Struct(&'a Arc<StructTypeInfo>),
+    /// Description of a primitive data type.
     Primitive(&'a Arc<GenericTypeInfo>),
 }
 
@@ -180,6 +188,16 @@ impl Default for ParentIds {
     }
 }
 
+/// Variant of a data type.
+pub enum DataTypeVariant {
+    /// Data type is an enumeration.
+    Enumeration,
+    /// Data type is a structure.
+    Structure,
+    /// Data type is some primitive.
+    Primitive,
+}
+
 impl ParentIds {
     /// Create a new empty parent ID map.
     pub fn new() -> Self {
@@ -191,6 +209,47 @@ impl ParentIds {
     /// Add a child, parent type pair.
     pub fn add_type(&mut self, node_id: NodeId, parent_id: NodeId) {
         self.parent_ids.insert(node_id, parent_id);
+    }
+
+    /// Get the data type variant, essentially checking if it needs special treatment,
+    /// by traversing up the hierarchy until we hit a known type.
+    pub fn get_data_type_variant(&self, id: &NodeId) -> Option<DataTypeVariant> {
+        if let Ok(t) = id.as_data_type_id() {
+            match t {
+                crate::DataTypeId::Boolean
+                | crate::DataTypeId::SByte
+                | crate::DataTypeId::Byte
+                | crate::DataTypeId::Int16
+                | crate::DataTypeId::UInt16
+                | crate::DataTypeId::Int32
+                | crate::DataTypeId::UInt32
+                | crate::DataTypeId::Int64
+                | crate::DataTypeId::UInt64
+                | crate::DataTypeId::Float
+                | crate::DataTypeId::Double
+                | crate::DataTypeId::String
+                | crate::DataTypeId::DateTime
+                | crate::DataTypeId::Guid
+                | crate::DataTypeId::ByteString
+                | crate::DataTypeId::XmlElement
+                | crate::DataTypeId::NodeId
+                | crate::DataTypeId::ExpandedNodeId
+                | crate::DataTypeId::StatusCode
+                | crate::DataTypeId::QualifiedName
+                | crate::DataTypeId::LocalizedText
+                | crate::DataTypeId::DataValue
+                | crate::DataTypeId::DiagnosticInfo
+                | crate::DataTypeId::BaseDataType => return Some(DataTypeVariant::Primitive),
+                crate::DataTypeId::Structure | crate::DataTypeId::Decimal => {
+                    return Some(DataTypeVariant::Structure)
+                }
+                crate::DataTypeId::Enumeration => return Some(DataTypeVariant::Enumeration),
+                _ => (),
+            }
+        }
+
+        let parent = self.parent_ids.get(id)?;
+        self.get_data_type_variant(parent)
     }
 
     /// Get the variant type for the given `id` by recursively traversing up
@@ -246,6 +305,7 @@ impl ParentIds {
 }
 
 impl TypeInfo {
+    /// Build a TypeInfo from the data type definition of the data type.
     pub fn from_type_definition(
         value: DataTypeDefinition,
         encoding_ids: Option<EncodingIds>,
