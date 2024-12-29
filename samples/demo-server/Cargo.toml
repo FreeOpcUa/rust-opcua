@@ -16,3 +16,8 @@ tokio-util = { workspace = true }
 [dependencies.opcua]
 path = "../../lib"
 features = ["all"]
+
+[features]
+default = ["json", "xml"]
+json = ["opcua/json"]
+xml = ["opcua/xml"]
