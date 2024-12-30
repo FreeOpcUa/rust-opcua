@@ -4,7 +4,7 @@ use base64::Engine;
 use syn::{parse::Parse, DeriveInput, Ident, LitStr, Token, Type};
 use uuid::Uuid;
 
-use crate::utils::{ItemAttr, StructItem};
+use crate::utils::{expect_struct, ItemAttr, StructItem};
 
 #[derive(Default, Debug)]
 pub(super) struct EventFieldAttribute {
@@ -137,7 +137,7 @@ impl ItemAttr for EventAttribute {
 pub type EventStruct = StructItem<EventFieldAttribute, EventAttribute>;
 
 pub fn parse_event_struct(input: DeriveInput) -> syn::Result<EventStruct> {
-    let mut parsed = EventStruct::from_input(input)?;
+    let mut parsed = EventStruct::from_input(expect_struct(input.data)?, input.attrs, input.ident)?;
 
     let mut filtered_fields = Vec::with_capacity(parsed.fields.len());
 

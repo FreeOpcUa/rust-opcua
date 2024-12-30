@@ -1,4 +1,5 @@
-use syn::{parse::Parse, DeriveInput, Field, Ident, Type};
+use proc_macro2::Span;
+use syn::{parse::Parse, Attribute, Data, DataStruct, Field, Ident, Type};
 
 #[derive(Debug, Default)]
 pub struct EmptyAttribute;
@@ -35,25 +36,19 @@ pub struct StructItem<TFieldAttr, TAttr> {
 impl<TFieldAttr: Parse + ItemAttr + Default, TAttr: Parse + ItemAttr + Default>
     StructItem<TFieldAttr, TAttr>
 {
-    pub fn from_input(input: DeriveInput) -> syn::Result<Self> {
-        let strct = match input.data {
-            syn::Data::Struct(s) => s,
-            _ => {
-                return Err(syn::Error::new_spanned(
-                    input.ident,
-                    "Derive macro input must be a struct",
-                ));
-            }
-        };
-
-        let fields = strct
+    pub fn from_input(
+        input: DataStruct,
+        attributes: Vec<Attribute>,
+        ident: Ident,
+    ) -> syn::Result<Self> {
+        let fields = input
             .fields
             .into_iter()
             .map(StructField::from_field)
             .collect::<Result<Vec<_>, _>>()?;
 
         let mut final_attr = TAttr::default();
-        for attr in input.attrs {
+        for attr in attributes {
             if attr.path().segments.len() == 1
                 && attr
                     .path()
@@ -67,7 +62,7 @@ impl<TFieldAttr: Parse + ItemAttr + Default, TAttr: Parse + ItemAttr + Default>
         }
 
         Ok(Self {
-            ident: input.ident,
+            ident,
             fields,
             attribute: final_attr,
         })
@@ -100,5 +95,15 @@ impl<T: Parse + ItemAttr + Default> StructField<T> {
             typ: field.ty,
             attr: final_attr,
         })
+    }
+}
+
+pub fn expect_struct(input: Data) -> syn::Result<DataStruct> {
+    match input {
+        syn::Data::Struct(s) => Ok(s),
+        _ => Err(syn::Error::new(
+            Span::call_site(),
+            "Derive macro input must be a struct",
+        )),
     }
 }

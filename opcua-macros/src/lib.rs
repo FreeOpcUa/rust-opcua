@@ -74,7 +74,7 @@ pub fn derive_event_field(item: TokenStream) -> TokenStream {
 
 #[cfg(feature = "xml")]
 #[proc_macro_derive(FromXml, attributes(opcua))]
-/// Derive the `FromXml` trait on this struct, creating a conversion from
+/// Derive the `FromXml` trait on this struct or enum, creating a conversion from
 /// NodeSet2 XML files.
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `FromXml`.
@@ -87,7 +87,7 @@ pub fn derive_from_xml(item: TokenStream) -> TokenStream {
 
 #[cfg(feature = "json")]
 #[proc_macro_derive(JsonEncodable, attributes(opcua))]
-/// Derive the `JsonEncodable` trait on this struct, creating code
+/// Derive the `JsonEncodable` trait on this struct or enum, creating code
 /// to write the struct to a JSON stream on OPC-UA reversible encoding.
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `JsonEncodable`.
@@ -100,7 +100,7 @@ pub fn derive_json_encodable(item: TokenStream) -> TokenStream {
 
 #[cfg(feature = "json")]
 #[proc_macro_derive(JsonDecodable, attributes(opcua))]
-/// Derive the `JsonDecodable` trait on this struct, creating code
+/// Derive the `JsonDecodable` trait on this struct or enum, creating code
 /// to read the struct from an OPC-UA stream with reversible encoding.
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `JsonDecodable`.
@@ -112,7 +112,7 @@ pub fn derive_json_decodable(item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_derive(BinaryEncodable, attributes(opcua))]
-/// Derive the `BinaryEncodable` trait on this struct, creating code
+/// Derive the `BinaryEncodable` trait on this struct or enum, creating code
 /// to write the struct to an OPC-UA binary stream.
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `BinaryEncodable`.
@@ -124,12 +124,26 @@ pub fn derive_binary_encodable(item: TokenStream) -> TokenStream {
 }
 
 #[proc_macro_derive(BinaryDecodable, attributes(opcua))]
-/// Derive the `BinaryDecodable` trait on this struct, creating code
+/// Derive the `BinaryDecodable` trait on this struct or enum, creating code
 /// to read the struct from an OPC-UA binary stream.
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `BinaryDecodable`.
 pub fn derive_binary_decodable(item: TokenStream) -> TokenStream {
     match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::BinaryDecode) {
+        Ok(r) => r.into(),
+        Err(e) => e.to_compile_error().into(),
+    }
+}
+
+#[proc_macro_derive(UaEnum, attributes(opcua))]
+/// Derive the `UaEnum` trait on this simple enum, creating code to convert it
+/// to and from OPC-UA string representation and its numeric representation.
+/// The enum must have a `repr([int])` attribute.
+///
+/// This also implements `TryFrom<[int]>` for the given `repr`, `Into<[int]>`, `IntoVariant`, and `Default`
+/// if a variant is labeled with `#[opcua(default)]`
+pub fn derive_ua_enum(item: TokenStream) -> TokenStream {
+    match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::UaEnum) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }

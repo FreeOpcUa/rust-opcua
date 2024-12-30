@@ -284,6 +284,8 @@ pub use opcua_macros::JsonEncodable;
 
 pub use opcua_macros::BinaryDecodable;
 pub use opcua_macros::BinaryEncodable;
+pub use opcua_macros::UaEnum;
+mod ua_enum;
 
 pub use self::{
     add_node_attributes::AddNodeAttributes,
@@ -315,6 +317,7 @@ pub use self::{
     status_code::*,
     string::*,
     type_loader::*,
+    ua_enum::*,
     variant::*,
 };
 

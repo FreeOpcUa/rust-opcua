@@ -425,22 +425,33 @@ impl CodeGenerator {
             });
         }
         attrs.push(parse_quote! {
-            #[derive(Debug, Copy, Clone, PartialEq, Eq)]
+            #[derive(Debug, Copy, Clone, PartialEq, Eq,
+            opcua::types::UaEnum, opcua::types::BinaryEncodable,
+            opcua::types::BinaryDecodable)]
+        });
+        attrs.push(parse_quote! {
+            #[cfg_attr(
+                feature = "json",
+                derive(opcua::types::JsonEncodable, opcua::types::JsonDecodable)
+            )]
+        });
+        attrs.push(parse_quote! {
+            #[cfg_attr(feature = "xml", derive(opcua::types::FromXml))]
         });
         let ty: Type = syn::parse_str(&item.typ.to_string())?;
         attrs.push(parse_quote! {
             #[repr(#ty)]
         });
 
-        let mut try_from_arms = quote! {};
-        let mut default_ident = None;
-
         for field in &item.values {
             let (name, _) = safe_ident(&field.name);
             let value = field.value;
-            if value == 0 {
-                default_ident = Some(name.clone());
-            }
+            let is_default = if let Some(default_name) = &item.default_value {
+                &name.to_string() == default_name
+            } else {
+                value == 0
+            };
+
             let value_token = match item.typ {
                 EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
@@ -474,162 +485,19 @@ impl CodeGenerator {
                 }
             };
 
-            try_from_arms = quote! {
-                #try_from_arms
-                #value_token => Self::#name,
-            };
-
-            variants.push(parse_quote! {
-                #name = #value_token
-            })
+            if is_default {
+                variants.push(parse_quote! {
+                    #[opcua(default)]
+                    #name = #value_token
+                })
+            } else {
+                variants.push(parse_quote! {
+                    #name = #value_token
+                })
+            }
         }
 
-        if item.values.iter().any(|f| f.name == "Invalid") {
-            let invalid_msg = format!(
-                "Got unexpected value for enum {}: {{}}. Falling back on Invalid",
-                item.name
-            );
-            try_from_arms = quote! {
-                #try_from_arms
-                r => {
-                    log::warn!(#invalid_msg, r);
-                    Self::Invalid
-                },
-            };
-        } else {
-            let invalid_msg = format!("Got unexpected value for enum {}: {{}}", item.name);
-            try_from_arms = quote! {
-                #try_from_arms
-                r => {
-                    return Err(opcua::types::Error::decoding(format!(#invalid_msg, r)))
-                }
-            };
-        }
-
-        let mut impls = Vec::new();
         let (enum_ident, _) = safe_ident(&item.name);
-
-        if let Some(default_name) = item.default_value {
-            let (default_ident, _) = safe_ident(&default_name);
-            impls.push(parse_quote! {
-                impl Default for #enum_ident {
-                    fn default() -> Self {
-                        Self::#default_ident
-                    }
-                }
-            });
-        } else if let Some(default_ident) = default_ident {
-            impls.push(parse_quote! {
-                impl Default for #enum_ident {
-                    fn default() -> Self {
-                        Self::#default_ident
-                    }
-                }
-            });
-        }
-
-        // TryFrom impl
-        impls.push(parse_quote! {
-            impl TryFrom<#ty> for #enum_ident {
-                type Error = opcua::types::Error;
-
-                fn try_from(value: #ty) -> Result<Self, <Self as TryFrom<#ty>>::Error> {
-                    Ok(match value {
-                        #try_from_arms
-                    })
-                }
-            }
-        });
-        // Xml impl
-        let fail_xml_msg = format!("Got unexpected value for enum {}: {{}}", item.name);
-        impls.push(parse_quote! {
-            #[cfg(feature = "xml")]
-            impl opcua::types::xml::FromXml for #enum_ident {
-                fn from_xml(
-                    element: &opcua::types::xml::XmlElement,
-                    ctx: &opcua::types::xml::XmlContext<'_>
-                ) -> Result<Self, opcua::types::xml::FromXmlError> {
-                    let val = #ty::from_xml(element, ctx)?;
-                    Ok(Self::try_from(val).map_err(|e| format!(#fail_xml_msg, e))?)
-                }
-            }
-        });
-
-        impls.push(parse_quote! {
-            impl From<#enum_ident> for #ty {
-                fn from(value: #enum_ident) -> Self {
-                    value as #ty
-                }
-            }
-        });
-        impls.push(parse_quote! {
-            impl opcua::types::IntoVariant for #enum_ident {
-                fn into_variant(self) -> opcua::types::Variant {
-                    (self as #ty).into_variant()
-                }
-            }
-        });
-
-        let typ_name_str = item.typ.to_string();
-        let failure_str = format!("Failed to deserialize {}: {{:?}}", typ_name_str);
-        impls.push(parse_quote! {
-            #[cfg(feature = "json")]
-            impl opcua::types::json::JsonDecodable for #enum_ident {
-                fn decode(
-                    stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
-                    _ctx: &opcua::types::Context<'_>,
-                ) -> opcua::types::EncodingResult<Self> {
-                    use opcua::types::json::JsonReader;
-                    let value: #ty = stream.next_number()??;
-                    Self::try_from(value).map_err(|e| {
-                        opcua::types::Error::decoding(format!(#failure_str, e))
-                    })
-                }
-            }
-        });
-
-        impls.push(parse_quote! {
-            #[cfg(feature = "json")]
-            impl opcua::types::json::JsonEncodable for #enum_ident {
-                fn encode(
-                    &self,
-                    stream: &mut opcua::types::json::JsonStreamWriter<&mut dyn std::io::Write>,
-                    _ctx: &opcua::types::Context<'_>,
-                ) -> opcua::types::EncodingResult<()> {
-                    use opcua::types::json::JsonWriter;
-                    stream.number_value(*self as #ty)?;
-                    Ok(())
-                }
-            }
-        });
-
-        // BinaryEncodable impl
-        let size: usize = item.size.try_into().map_err(|_| {
-            CodeGenError::Other(format!("Value {} does not fit in a usize", item.size))
-        })?;
-        let write_method = Ident::new(&format!("write_{}", item.typ), Span::call_site());
-        let read_method = Ident::new(&format!("read_{}", item.typ), Span::call_site());
-
-        impls.push(parse_quote! {
-            impl opcua::types::BinaryEncodable for #enum_ident {
-                fn byte_len(&self, _ctx: &opcua::types::Context<'_>) -> usize {
-                    #size
-                }
-
-                fn encode<S: std::io::Write + ?Sized>(&self, stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<()> {
-                    opcua::types::#write_method(stream, *self as #ty)
-                }
-            }
-        });
-
-        impls.push(parse_quote! {
-            impl opcua::types::BinaryDecodable for #enum_ident {
-                fn decode<S: std::io::Read + ?Sized>(stream: &mut S, _ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
-                    let value = opcua::types::#read_method(stream)?;
-                    Self::try_from(value)
-                }
-            }
-        });
 
         let res = ItemEnum {
             attrs,
@@ -643,7 +511,7 @@ impl CodeGenerator {
 
         Ok(GeneratedItem {
             item: ItemDefinition::Enum(res),
-            impls,
+            impls: Vec::new(),
             module: if self.config.enums_single_file {
                 "enums".to_owned()
             } else {

@@ -2,7 +2,7 @@ use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
 use syn::DeriveInput;
 
-use crate::utils::{EmptyAttribute, StructItem};
+use crate::utils::{expect_struct, EmptyAttribute, StructItem};
 
 use super::parse::EventFieldAttribute;
 
@@ -11,7 +11,7 @@ use quote::quote;
 pub type EventFieldStruct = StructItem<EventFieldAttribute, EmptyAttribute>;
 
 pub fn parse_event_field_struct(input: DeriveInput) -> syn::Result<EventFieldStruct> {
-    EventFieldStruct::from_input(input)
+    EventFieldStruct::from_input(expect_struct(input.data)?, input.attrs, input.ident)
 }
 
 pub fn generate_event_field_impls(event: EventFieldStruct) -> syn::Result<TokenStream> {

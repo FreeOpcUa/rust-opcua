@@ -1,7 +1,7 @@
 use proc_macro2::TokenStream;
 use quote::quote;
 
-use super::EncodingStruct;
+use super::{enums::SimpleEnum, EncodingStruct};
 
 pub fn generate_binary_encode_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let mut byte_len_body = quote! {};
@@ -95,6 +95,43 @@ pub fn generate_binary_decode_impl(strct: EncodingStruct) -> syn::Result<TokenSt
                 Ok(Self {
                     #decode_build
                 })
+            }
+        }
+    })
+}
+
+pub fn generate_simple_enum_binary_decode_impl(en: SimpleEnum) -> syn::Result<TokenStream> {
+    let ident = en.ident;
+    let repr = en.repr;
+
+    Ok(quote! {
+        impl opcua::types::BinaryDecodable for #ident {
+            #[allow(unused_variables)]
+            fn decode<S: std::io::Read + ?Sized>(stream: &mut S, ctx: &opcua::types::Context<'_>) -> opcua::types::EncodingResult<Self> {
+                let val = #repr::decode(stream, ctx)?;
+                Self::try_from(val)
+            }
+        }
+    })
+}
+
+pub fn generate_simple_enum_binary_encode_impl(en: SimpleEnum) -> syn::Result<TokenStream> {
+    let ident = en.ident;
+    let repr = en.repr;
+
+    Ok(quote! {
+        impl opcua::types::BinaryEncodable for #ident {
+            #[allow(unused)]
+            fn byte_len(&self, ctx: &opcua::types::Context<'_>) -> usize {
+                (*self as #repr).byte_len(ctx)
+            }
+            #[allow(unused)]
+            fn encode<S: std::io::Write + ?Sized>(
+                &self,
+                stream: &mut S,
+                ctx: &opcua::types::Context<'_>,
+            ) -> opcua::types::EncodingResult<()> {
+                (*self as #repr).encode(stream, ctx)
             }
         }
     })

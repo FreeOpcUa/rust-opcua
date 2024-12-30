@@ -4,7 +4,7 @@ use syn::Ident;
 
 use quote::quote;
 
-use super::EncodingStruct;
+use super::{enums::SimpleEnum, EncodingStruct};
 
 pub fn generate_json_encode_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let ident = strct.ident;
@@ -107,7 +107,7 @@ pub fn generate_json_decode_impl(strct: EncodingStruct) -> syn::Result<TokenStre
             });
         }
 
-        if field.attr.required {
+        if field.attr.no_default {
             let err = format!("Missing required field {name}");
             build.extend(quote! {
                 #ident: #ident.unwrap_or_else(|| {
@@ -148,6 +148,40 @@ pub fn generate_json_decode_impl(strct: EncodingStruct) -> syn::Result<TokenStre
                 Ok(Self {
                     #build
                 })
+            }
+        }
+    })
+}
+
+pub fn generate_simple_enum_json_decode_impl(en: SimpleEnum) -> syn::Result<TokenStream> {
+    let ident = en.ident;
+    let repr = en.repr;
+
+    Ok(quote! {
+        impl opcua::types::json::JsonDecodable for #ident {
+            fn decode(
+                stream: &mut opcua::types::json::JsonStreamReader<&mut dyn std::io::Read>,
+                ctx: &opcua::types::Context<'_>,
+            ) -> opcua::types::EncodingResult<Self> {
+                let val = #repr::decode(stream, ctx)?;
+                Self::try_from(val)
+            }
+        }
+    })
+}
+
+pub fn generate_simple_enum_json_encode_impl(en: SimpleEnum) -> syn::Result<TokenStream> {
+    let ident = en.ident;
+    let repr = en.repr;
+
+    Ok(quote! {
+        impl opcua::types::json::JsonEncodable for #ident {
+            fn encode(
+                &self,
+                stream: &mut opcua::types::json::JsonStreamWriter<&mut dyn std::io::Write>,
+                ctx: &opcua::types::Context<'_>
+            ) -> opcua::types::EncodingResult<()> {
+                (*self as #repr).encode(stream, ctx)
             }
         }
     })
