@@ -1,17 +1,11 @@
 use convert_case::{Case, Casing};
 use proc_macro2::TokenStream;
-use syn::DeriveInput;
 
-use crate::utils::{EmptyAttribute, EncodingFieldAttribute, StructItem};
 use quote::quote;
 
-pub type XmlStruct = StructItem<EncodingFieldAttribute, EmptyAttribute>;
+use super::EncodingStruct;
 
-pub fn parse_xml_struct(input: DeriveInput) -> syn::Result<XmlStruct> {
-    XmlStruct::from_input(input)
-}
-
-pub fn generate_xml_impl(strct: XmlStruct) -> syn::Result<TokenStream> {
+pub fn generate_xml_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let ident = strct.ident;
     let mut body = quote! {};
     let mut build = quote! {};

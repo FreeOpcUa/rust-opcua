@@ -1,16 +1,9 @@
 use proc_macro2::TokenStream;
 use quote::quote;
-use syn::DeriveInput;
 
-use crate::utils::{EmptyAttribute, EncodingFieldAttribute, StructItem};
+use super::EncodingStruct;
 
-pub type BinaryStruct = StructItem<EncodingFieldAttribute, EmptyAttribute>;
-
-pub fn parse_binary_struct(input: DeriveInput) -> syn::Result<BinaryStruct> {
-    BinaryStruct::from_input(input)
-}
-
-pub fn generate_binary_encode_impl(strct: BinaryStruct) -> syn::Result<TokenStream> {
+pub fn generate_binary_encode_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let mut byte_len_body = quote! {};
     let mut encode_body = quote! {};
 
@@ -50,7 +43,7 @@ pub fn generate_binary_encode_impl(strct: BinaryStruct) -> syn::Result<TokenStre
     })
 }
 
-pub fn generate_binary_decode_impl(strct: BinaryStruct) -> syn::Result<TokenStream> {
+pub fn generate_binary_decode_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let mut decode_impl = quote! {};
     let mut decode_build = quote! {};
 

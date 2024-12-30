@@ -1,18 +1,12 @@
 use convert_case::{Case, Casing};
 use proc_macro2::{Span, TokenStream};
-use syn::{DeriveInput, Ident};
-
-use crate::utils::{EmptyAttribute, EncodingFieldAttribute, StructItem};
+use syn::Ident;
 
 use quote::quote;
 
-pub type JsonStruct = StructItem<EncodingFieldAttribute, EmptyAttribute>;
+use super::EncodingStruct;
 
-pub fn parse_json_struct(input: DeriveInput) -> syn::Result<JsonStruct> {
-    JsonStruct::from_input(input)
-}
-
-pub fn generate_json_encode_impl(strct: JsonStruct) -> syn::Result<TokenStream> {
+pub fn generate_json_encode_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let ident = strct.ident;
     let mut body = quote! {};
     for field in strct.fields {
@@ -53,7 +47,7 @@ pub fn generate_json_encode_impl(strct: JsonStruct) -> syn::Result<TokenStream> 
     })
 }
 
-pub fn generate_json_decode_impl(strct: JsonStruct) -> syn::Result<TokenStream> {
+pub fn generate_json_decode_impl(strct: EncodingStruct) -> syn::Result<TokenStream> {
     let ident = strct.ident;
     let mut items = quote! {};
     let mut items_match = quote! {};

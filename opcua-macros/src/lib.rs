@@ -2,15 +2,11 @@
 
 //! Crate containing various procedural macros used by rust OPC-UA.
 
-mod binary;
+mod encoding;
 mod events;
-#[cfg(feature = "json")]
-mod json;
 mod utils;
-#[cfg(feature = "xml")]
-mod xml;
 
-use binary::{derive_binary_decode_inner, derive_binary_encode_inner};
+use encoding::{generate_encoding_impl, EncodingToImpl};
 use events::{derive_event_field_inner, derive_event_inner};
 use proc_macro::TokenStream;
 use syn::parse_macro_input;
@@ -83,9 +79,7 @@ pub fn derive_event_field(item: TokenStream) -> TokenStream {
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `FromXml`.
 pub fn derive_from_xml(item: TokenStream) -> TokenStream {
-    use xml::derive_from_xml_inner;
-
-    match derive_from_xml_inner(parse_macro_input!(item)) {
+    match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::FromXml) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }
@@ -98,9 +92,7 @@ pub fn derive_from_xml(item: TokenStream) -> TokenStream {
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `JsonEncodable`.
 pub fn derive_json_encodable(item: TokenStream) -> TokenStream {
-    use json::derive_json_encode_inner;
-
-    match derive_json_encode_inner(parse_macro_input!(item)) {
+    match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::JsonEncode) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }
@@ -113,9 +105,7 @@ pub fn derive_json_encodable(item: TokenStream) -> TokenStream {
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `JsonDecodable`.
 pub fn derive_json_decodable(item: TokenStream) -> TokenStream {
-    use json::derive_json_decode_inner;
-
-    match derive_json_decode_inner(parse_macro_input!(item)) {
+    match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::JsonDecode) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }
@@ -127,7 +117,7 @@ pub fn derive_json_decodable(item: TokenStream) -> TokenStream {
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `BinaryEncodable`.
 pub fn derive_binary_encodable(item: TokenStream) -> TokenStream {
-    match derive_binary_encode_inner(parse_macro_input!(item)) {
+    match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::BinaryEncode) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }
@@ -139,7 +129,7 @@ pub fn derive_binary_encodable(item: TokenStream) -> TokenStream {
 ///
 /// All fields must be marked with `opcua(ignore)` or implement `BinaryDecodable`.
 pub fn derive_binary_decodable(item: TokenStream) -> TokenStream {
-    match derive_binary_decode_inner(parse_macro_input!(item)) {
+    match generate_encoding_impl(parse_macro_input!(item), EncodingToImpl::BinaryDecode) {
         Ok(r) => r.into(),
         Err(e) => e.to_compile_error().into(),
     }
