@@ -18,8 +18,8 @@ use crate::{
     AnonymousIdentityToken, ApplicationDescription, CallMethodRequest, DataTypeId,
     EndpointDescription, Error, ExpandedNodeId, HistoryUpdateType, IdentityCriteriaType,
     MessageSecurityMode, MonitoredItemCreateRequest, MonitoringMode, MonitoringParameters,
-    NumericRange, ObjectId, ReadValueId, ServiceCounterDataType, ServiceFault, SignatureData,
-    UserNameIdentityToken, UserTokenPolicy, UserTokenType,
+    NumericRange, ObjectId, ReadValueId, ReferenceTypeId, RelativePath, ServiceCounterDataType,
+    ServiceFault, SignatureData, UserNameIdentityToken, UserTokenPolicy, UserTokenType,
 };
 
 use super::PerformUpdateType;
@@ -412,5 +412,22 @@ impl Default for HistoryUpdateType {
 impl Default for IdentityCriteriaType {
     fn default() -> Self {
         Self::Anonymous
+    }
+}
+
+impl From<&[QualifiedName]> for RelativePath {
+    fn from(value: &[QualifiedName]) -> Self {
+        let elements = value
+            .iter()
+            .map(|qn| super::relative_path_element::RelativePathElement {
+                reference_type_id: ReferenceTypeId::HierarchicalReferences.into(),
+                is_inverse: false,
+                include_subtypes: true,
+                target_name: qn.clone(),
+            })
+            .collect();
+        Self {
+            elements: Some(elements),
+        }
     }
 }

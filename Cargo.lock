@@ -1365,6 +1365,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "opcua-structure-client"
+version = "0.13.0"
+dependencies = [
+ "log",
+ "opcua",
+ "pico-args",
+ "tokio",
+]
+
+[[package]]
 name = "opcua-types"
 version = "0.13.0"
 dependencies = [

@@ -1,0 +1,16 @@
+[package]
+name = "opcua-structure-client"
+version = "0.13.0" # OPCUARustVersion
+authors = ["Rust-OpcUa contributors"]
+edition = "2021"
+
+[dependencies]
+pico-args = "0.5"
+tokio = { version = "1.36.0", features = ["full"] }
+log = { workspace = true }
+
+[dependencies.opcua]
+path = "../../lib"
+version = "0.13.0" # OPCUARustVersion
+features = ["client", "console-logging"]
+default-features = false
