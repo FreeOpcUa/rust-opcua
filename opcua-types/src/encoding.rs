@@ -57,7 +57,7 @@ pub struct Error {
     status: StatusCode,
     request_id: Option<u32>,
     request_handle: Option<u32>,
-    context: Box<dyn StdError>,
+    context: Box<dyn StdError + Send + Sync>,
 }
 
 impl Display for Error {
@@ -69,7 +69,7 @@ impl Display for Error {
 impl Error {
     /// Create a new error with the specified `status` code and
     /// `context` as a dynamic error source.
-    pub fn new(status: StatusCode, context: impl Into<Box<dyn StdError>>) -> Self {
+    pub fn new(status: StatusCode, context: impl Into<Box<dyn StdError + Send + Sync>>) -> Self {
         Self {
             status,
             request_handle: None,
@@ -80,7 +80,7 @@ impl Error {
 
     /// Create a new error with status code `BadDecodingError` and
     /// `context` as a dynamic error source.
-    pub fn decoding(context: impl Into<Box<dyn StdError>>) -> Self {
+    pub fn decoding(context: impl Into<Box<dyn StdError + Send + Sync>>) -> Self {
         Self {
             status: StatusCode::BadDecodingError,
             request_handle: None,
@@ -91,7 +91,7 @@ impl Error {
 
     /// Create a new error with status code `BadEncodingError` and
     /// `context` as a dynamic error source.
-    pub fn encoding(context: impl Into<Box<dyn StdError>>) -> Self {
+    pub fn encoding(context: impl Into<Box<dyn StdError + Send + Sync>>) -> Self {
         Self {
             status: StatusCode::BadEncodingError,
             request_handle: None,
