@@ -66,6 +66,9 @@ pub mod comms;
 pub mod config;
 pub mod handle;
 
+/// Rust OpcUa specific errors
+pub mod errors;
+
 pub mod messages;
 pub use messages::{Message, MessageType, RequestMessage, ResponseMessage};
 
