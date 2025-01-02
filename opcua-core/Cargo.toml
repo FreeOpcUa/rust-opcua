@@ -28,6 +28,7 @@ url = { workspace = true }
 
 opcua-types = { path = "../opcua-types" }
 opcua-crypto = { path = "../opcua-crypto" }
+thiserror = { workspace = true }
 
 
 [lints.rust]
