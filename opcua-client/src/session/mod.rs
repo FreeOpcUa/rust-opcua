@@ -432,7 +432,6 @@ impl Session {
         )
     }
 
-    ///
     /// Return namespace array from server and store in namespace cache
     pub async fn read_namespace_array(&mut self) -> Result<NamespaceMap, Error> {
         let nodeid: NodeId = VariableId::Server_NamespaceArray.into();
