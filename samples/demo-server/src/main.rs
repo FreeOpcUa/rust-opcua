@@ -26,9 +26,12 @@ use opcua::server::{
 };
 
 mod control;
+mod customs;
 mod machine;
 mod methods;
 mod scalar;
+
+const NAMESPACE_URI: &str = "urn:DemoServer";
 
 struct Args {
     help: bool,
@@ -130,9 +133,12 @@ async fn main() {
             .node_managers()
             .get_of_type::<SimpleNodeManager>()
             .unwrap();
-        let ns = handle.get_namespace_index("urn:DemoServer").unwrap();
+        let ns = handle.get_namespace_index(NAMESPACE_URI).unwrap();
 
         let token = handle.token();
+
+        // Define some custom types
+        customs::add_custom_types(node_manager.clone(), ns);
 
         // Add some objects representing machinery
         machine::add_machinery(
