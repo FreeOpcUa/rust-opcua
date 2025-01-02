@@ -446,7 +446,7 @@ impl Session {
                 Error::new(status_code, "Reading Server namespace array failed")
             })?;
         if let Some(Variant::Array(array)) = &result[0].value {
-            let map = NamespaceMap::new_from_variant_array(&array.values);
+            let map = NamespaceMap::new_from_variant_array(&array.values)?;
             let map_clone = map.clone();
             self.set_namespaces(map);
             Ok(map_clone)
@@ -461,10 +461,15 @@ impl Session {
         }
     }
 
+    /// Return index of supplied namespace url from cache
+    pub fn get_namespace_index_from_cache(&mut self, url: &str) -> Option<u16> {
+        self.encoding_context.read().namespaces().get_index(url)
+    }
+
     /// Return index of supplied namespace url
     /// by first looking at namespace cache and querying server if necessary
     pub async fn get_namespace_index(&mut self, url: &str) -> Result<u16, Error> {
-        if let Some(idx) = self.encoding_context.read().namespaces().get_index(url) {
+        if let Some(idx) = self.get_namespace_index_from_cache(url) {
             return Ok(idx);
         };
         let map = self.read_namespace_array().await?;

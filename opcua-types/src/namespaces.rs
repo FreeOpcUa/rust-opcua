@@ -2,7 +2,7 @@
 
 use hashbrown::HashMap;
 
-use crate::{ExpandedNodeId, NodeId, Variant};
+use crate::{Error, ExpandedNodeId, NodeId, StatusCode, Variant};
 
 /// Utility for handling assignment of namespaces on server startup.
 #[derive(Debug, Default, Clone)]
@@ -28,19 +28,22 @@ impl NamespaceMap {
 
     /// Create a new namespace map from a vec of variant as we get when reading
     /// the namespace array from the server
-    pub fn new_from_variant_array(array: &[Variant]) -> Self {
-        let known_namespaces = array
+    pub fn new_from_variant_array(array: &[Variant]) -> Result<Self, Error> {
+        let known_namespaces: HashMap<String, u16> = array
             .iter()
             .enumerate()
             .map(|(idx, v)| {
                 if let Variant::String(s) = v {
-                    (s.value().clone().unwrap_or(String::new()), idx as u16)
+                    Ok((s.value().clone().unwrap_or(String::new()), idx as u16))
                 } else {
-                    (String::new(), idx as u16)
+                    Err(Error::new(
+                        StatusCode::Bad,
+                        "Namespace array on server contains invalid data",
+                    ))
                 }
             })
-            .collect();
-        Self { known_namespaces }
+            .collect::<Result<HashMap<_, _>, _>>()?;
+        Ok(Self { known_namespaces })
     }
 
     /// Add a new namespace, returning its index in the namespace map.
