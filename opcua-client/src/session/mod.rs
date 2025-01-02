@@ -462,8 +462,7 @@ impl Session {
         }
     }
 
-    ///
-    /// return index of supplied namespace url
+    /// Return index of supplied namespace url
     /// by first looking at namespace cache and querying server if necessary
     pub async fn get_namespace_index(&mut self, url: &str) -> Result<u16, Error> {
         if let Some(idx) = self.encoding_context.read().namespaces().get_index(url) {
