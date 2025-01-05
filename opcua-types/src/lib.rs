@@ -250,6 +250,7 @@ pub mod data_value;
 pub mod date_time;
 pub mod diagnostic_info;
 pub mod encoding;
+pub mod errors;
 pub mod event_field;
 pub mod expanded_node_id;
 pub mod extension_object;

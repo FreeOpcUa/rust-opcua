@@ -64,7 +64,6 @@ pub mod constants {
 
 pub mod comms;
 pub mod config;
-pub mod errors;
 pub mod handle;
 
 pub mod messages;

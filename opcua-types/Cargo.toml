@@ -35,7 +35,6 @@ struson = { workspace = true, optional = true }
 
 opcua-xml = { path = "../opcua-xml", optional = true }
 
-
 [dev-dependencies]
 opcua-types = { path = ".", features = ["xml", "json"] }
 serde_json = { workspace = true }

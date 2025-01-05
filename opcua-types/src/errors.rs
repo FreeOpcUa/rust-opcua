@@ -3,15 +3,19 @@
 
 //!  Rust OpcUa specific errors
 
-use opcua_types::VariantScalarTypeId;
 use thiserror::Error;
+
+use crate::VariantScalarTypeId;
 
 /// Rust OpcUa specific errors
 #[allow(missing_docs)]
 #[derive(Error, Debug)]
 pub enum OpcUAError {
     #[error("Received an unexpected variant type")]
-    UnexpectedVariantType(Option<VariantScalarTypeId>),
+    UnexpectedVariantType {
+        variant_id: Option<VariantScalarTypeId>,
+        message: String,
+    },
     #[error("The requested namespace does not exists")]
     NamespaceDoesNotExist(String),
 }
