@@ -10,7 +10,7 @@ use thiserror::Error;
 #[allow(missing_docs)]
 #[derive(Error, Debug)]
 pub enum OpcUAError {
-    #[error("Received an expected variant type")]
+    #[error("Received an unexpected variant type")]
     UnExpectedVariantType(Option<VariantScalarTypeId>),
     #[error("The requested namespace does not exists")]
     NamespaceDoesNotExist(String),
