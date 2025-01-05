@@ -108,8 +108,9 @@ pub(crate) use session_trace;
 
 use opcua_core::ResponseMessage;
 use opcua_types::{
-    ApplicationDescription, ContextOwned, DecodingOptions, EndpointDescription, IntegerId,
-    NamespaceMap, NodeId, RequestHeader, ResponseHeader, StatusCode, TypeLoader, UAString,
+    ApplicationDescription, ContextOwned, DecodingOptions, EndpointDescription, Error, IntegerId,
+    NamespaceMap, NodeId, ReadValueId, RequestHeader, ResponseHeader, StatusCode,
+    TimestampsToReturn, TypeLoader, UAString, VariableId, Variant,
 };
 
 use crate::browser::Browser;
@@ -429,5 +430,59 @@ impl Session {
                 Duration::from_millis(500),
             )),
         )
+    }
+
+    /// Return namespace array from server and store in namespace cache
+    pub async fn read_namespace_array(&mut self) -> Result<NamespaceMap, Error> {
+        let nodeid: NodeId = VariableId::Server_NamespaceArray.into();
+        let result = self
+            .read(
+                &[ReadValueId::from(nodeid)],
+                TimestampsToReturn::Neither,
+                0.0,
+            )
+            .await
+            .map_err(|status_code| {
+                Error::new(status_code, "Reading Server namespace array failed")
+            })?;
+        if let Some(Variant::Array(array)) = &result[0].value {
+            let map = NamespaceMap::new_from_variant_array(&array.values)
+                .map_err(|e| Error::new(StatusCode::Bad, e))?;
+            let map_clone = map.clone();
+            self.set_namespaces(map);
+            Ok(map_clone)
+        } else {
+            Err(Error::new(
+                StatusCode::BadNoValue,
+                format!(
+                    "Server namespace array is None. The server has an issue {:?}",
+                    result
+                ),
+            ))
+        }
+    }
+
+    /// Return index of supplied namespace url from cache
+    pub fn get_namespace_index_from_cache(&mut self, url: &str) -> Option<u16> {
+        self.encoding_context.read().namespaces().get_index(url)
+    }
+
+    /// Return index of supplied namespace url
+    /// by first looking at namespace cache and querying server if necessary
+    pub async fn get_namespace_index(&mut self, url: &str) -> Result<u16, Error> {
+        if let Some(idx) = self.get_namespace_index_from_cache(url) {
+            return Ok(idx);
+        };
+        let map = self.read_namespace_array().await?;
+        let idx = map.get_index(url).ok_or_else(|| {
+            Error::new(
+                StatusCode::BadNoMatch,
+                format!(
+                    "Url {} not found in namespace array. Namspace array is {:?}",
+                    url, &map
+                ),
+            )
+        })?;
+        Ok(idx)
     }
 }
