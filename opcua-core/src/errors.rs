@@ -11,7 +11,7 @@ use thiserror::Error;
 #[derive(Error, Debug)]
 pub enum OpcUAError {
     #[error("Received an unexpected variant type")]
-    UnExpectedVariantType(Option<VariantScalarTypeId>),
+    UnexpectedVariantType(Option<VariantScalarTypeId>),
     #[error("The requested namespace does not exists")]
     NamespaceDoesNotExist(String),
 }
