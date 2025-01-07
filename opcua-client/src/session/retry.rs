@@ -1,5 +1,6 @@
 use std::time::Duration;
 
+use futures::FutureExt;
 use opcua_types::StatusCode;
 
 use crate::retry::ExponentialBackoff;
@@ -138,7 +139,11 @@ impl Session {
     ) -> Result<T::Out, StatusCode> {
         loop {
             let next_request = request.clone();
-            match next_request.send(&self.channel).await {
+            // Removing `boxed` here causes any futures calling this to be non-send,
+            // due to a compiler bug. Look into removing this in the future.
+            // TODO: Check if tests compile without this in future rustc versions, especially
+            // if https://github.com/rust-lang/rust/issues/100013 is closed.
+            match next_request.send(&self.channel).boxed().await {
                 Ok(r) => break Ok(r),
                 Err(e) => {
                     if let Some(delay) = policy.get_next_delay(e) {
