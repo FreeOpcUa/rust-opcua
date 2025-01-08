@@ -617,20 +617,28 @@ async fn test_recursive_browser() {
         .is_some());
 }
 
+// Test that the future returned by `browser.run...` is `Send`
+fn assert_send<R: Send>(v: R) -> R {
+    v
+}
+
 #[tokio::test]
 // Hit the same node multiple times.
 async fn test_recursive_browser_multi_hit() {
     let (_tester, _nm, session) = setup().await;
 
     let filter = BrowseFilter::new(BrowseDirection::Forward, ReferenceTypeId::References, true);
+
     let to_browse = vec![filter.new_description_from_node(ObjectId::TypesFolder.into())];
-    let res = session
-        .browser()
-        .max_concurrent_requests(3)
-        .handler(filter)
-        .run_into_result(to_browse)
-        .await
-        .unwrap();
+    let res = assert_send(
+        session
+            .browser()
+            .max_concurrent_requests(3)
+            .handler(filter)
+            .run_into_result(to_browse),
+    )
+    .await
+    .unwrap();
 
     assert_eq!(4228, res.nodes.len());
 
