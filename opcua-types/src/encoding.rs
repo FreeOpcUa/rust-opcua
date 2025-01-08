@@ -66,6 +66,12 @@ impl Display for Error {
     }
 }
 
+impl StdError for Error {
+    fn source(&self) -> Option<&(dyn StdError + 'static)> {
+        Some(&*self.context)
+    }
+}
+
 impl Error {
     /// Create a new error with the specified `status` code and
     /// `context` as a dynamic error source.
