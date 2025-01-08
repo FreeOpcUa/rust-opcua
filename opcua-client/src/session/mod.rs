@@ -399,7 +399,7 @@ impl Session {
     /// Set the namespace array on the session.
     /// Make sure that this namespace array contains the base namespace,
     /// or the session may behave unexpectedly.
-    pub fn set_namespaces(&mut self, namespaces: NamespaceMap) {
+    pub fn set_namespaces(&self, namespaces: NamespaceMap) {
         *self.encoding_context.write().namespaces_mut() = namespaces;
     }
 
@@ -433,7 +433,7 @@ impl Session {
     }
 
     /// Return namespace array from server and store in namespace cache
-    pub async fn read_namespace_array(&mut self) -> Result<NamespaceMap, Error> {
+    pub async fn read_namespace_array(&self) -> Result<NamespaceMap, Error> {
         let nodeid: NodeId = VariableId::Server_NamespaceArray.into();
         let result = self
             .read(
