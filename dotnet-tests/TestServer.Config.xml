@@ -14,7 +14,7 @@
     <ApplicationCertificate>
       <StoreType>Directory</StoreType>
       <StorePath>./servercertificates/pki/own</StorePath>
-      <SubjectName>CN=Rust-opcua-test-server</SubjectName>
+      <SubjectName>CN=Rust-async-opcua-test-server</SubjectName>
     </ApplicationCertificate>
 
     <!-- Where the issuer certificate are stored (certificate authorities) -->

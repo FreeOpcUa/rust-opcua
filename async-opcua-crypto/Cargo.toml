@@ -1,0 +1,37 @@
+[package]
+name = "async-opcua-crypto"
+version = "0.13.0"
+description = "OPC UA cryptography library"
+authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/freeopcua/rust-opcua"
+repository = "https://github.com/freeopcua/rust-opcua"
+license = "MPL-2.0"
+keywords = ["opcua", "opc", "ua"]
+categories = ["embedded", "network-programming"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+edition = "2021"
+
+[lib]
+name = "opcua_crypto"
+
+[dependencies]
+log = { workspace = true }
+gethostname = { workspace = true }
+chrono = { workspace = true }
+serde = { workspace = true }
+
+async-opcua-types = { path = "../async-opcua-types" }
+
+hmac = { workspace = true }
+sha2 = { workspace = true }
+sha1 = { workspace = true }
+cbc = { workspace = true }
+aes = { workspace = true }
+rsa = { workspace = true }
+rand = { workspace = true }
+x509-cert = { workspace = true }
+const-oid = { workspace = true }
+
+[dev-dependencies]
+tempdir = "0.3"

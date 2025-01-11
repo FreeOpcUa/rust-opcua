@@ -71,6 +71,283 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "69f7f8c3906b62b754cd5326047894316021dcfe5a194c8ea52bdd94934a3457"
 
 [[package]]
+name = "async-opcua"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "async-opcua-client",
+ "async-opcua-core",
+ "async-opcua-core-namespace",
+ "async-opcua-crypto",
+ "async-opcua-macros",
+ "async-opcua-nodes",
+ "async-opcua-server",
+ "async-opcua-types",
+ "async-trait",
+ "bytes",
+ "chrono",
+ "env_logger",
+ "log",
+ "serde_json",
+ "tempdir",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
+name = "async-opcua-certificate-creator"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "pico-args",
+]
+
+[[package]]
+name = "async-opcua-chess-server"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "tokio",
+ "uci",
+]
+
+[[package]]
+name = "async-opcua-client"
+version = "0.13.0"
+dependencies = [
+ "arc-swap",
+ "async-opcua-core",
+ "async-opcua-crypto",
+ "async-opcua-nodes",
+ "async-opcua-types",
+ "async-opcua-xml",
+ "async-trait",
+ "chrono",
+ "futures",
+ "hashbrown 0.15.2",
+ "log",
+ "parking_lot",
+ "rsa",
+ "serde",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
+name = "async-opcua-codegen"
+version = "0.1.0"
+dependencies = [
+ "async-opcua-xml",
+ "base64 0.22.1",
+ "chrono",
+ "convert_case",
+ "log",
+ "prettyplease",
+ "proc-macro2",
+ "quote",
+ "regex",
+ "roxmltree",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "syn 2.0.90",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
+name = "async-opcua-core"
+version = "0.13.0"
+dependencies = [
+ "async-opcua-crypto",
+ "async-opcua-types",
+ "bytes",
+ "chrono",
+ "log",
+ "parking_lot",
+ "serde",
+ "serde_yaml",
+ "thiserror",
+ "tokio",
+ "tokio-util",
+ "url",
+]
+
+[[package]]
+name = "async-opcua-core-namespace"
+version = "0.13.0"
+dependencies = [
+ "async-opcua-nodes",
+ "async-opcua-types",
+]
+
+[[package]]
+name = "async-opcua-crypto"
+version = "0.13.0"
+dependencies = [
+ "aes",
+ "async-opcua-types",
+ "cbc",
+ "chrono",
+ "const-oid",
+ "gethostname",
+ "hmac",
+ "log",
+ "rand 0.8.5",
+ "rsa",
+ "serde",
+ "sha1",
+ "sha2",
+ "tempdir",
+ "x509-cert",
+]
+
+[[package]]
+name = "async-opcua-demo-server"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "chrono",
+ "log",
+ "log4rs",
+ "pico-args",
+ "rand 0.8.5",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
+name = "async-opcua-discovery-client"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "pico-args",
+ "tokio",
+]
+
+[[package]]
+name = "async-opcua-event-client"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "pico-args",
+ "tokio",
+]
+
+[[package]]
+name = "async-opcua-macros"
+version = "0.1.0"
+dependencies = [
+ "base64 0.22.1",
+ "convert_case",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.90",
+ "uuid",
+]
+
+[[package]]
+name = "async-opcua-mqtt-client"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "pico-args",
+ "rumqttc",
+ "tokio",
+]
+
+[[package]]
+name = "async-opcua-nodes"
+version = "0.13.0"
+dependencies = [
+ "async-opcua-macros",
+ "async-opcua-nodes",
+ "async-opcua-types",
+ "async-opcua-xml",
+ "bitflags",
+ "hashbrown 0.15.2",
+ "log",
+ "regex",
+ "thiserror",
+]
+
+[[package]]
+name = "async-opcua-server"
+version = "0.13.0"
+dependencies = [
+ "arc-swap",
+ "async-opcua-client",
+ "async-opcua-core",
+ "async-opcua-core-namespace",
+ "async-opcua-crypto",
+ "async-opcua-nodes",
+ "async-opcua-types",
+ "async-trait",
+ "bitflags",
+ "chrono",
+ "futures",
+ "hashbrown 0.15.2",
+ "log",
+ "parking_lot",
+ "postcard",
+ "regex",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+]
+
+[[package]]
+name = "async-opcua-simple-client"
+version = "0.0.0"
+dependencies = [
+ "async-opcua",
+ "log",
+ "pico-args",
+ "tokio",
+]
+
+[[package]]
+name = "async-opcua-simple-server"
+version = "0.13.0"
+dependencies = [
+ "async-opcua",
+ "chrono",
+ "log",
+ "tokio",
+]
+
+[[package]]
+name = "async-opcua-types"
+version = "0.13.0"
+dependencies = [
+ "async-opcua-macros",
+ "async-opcua-types",
+ "async-opcua-xml",
+ "base64 0.22.1",
+ "bitflags",
+ "byteorder",
+ "chrono",
+ "hashbrown 0.15.2",
+ "log",
+ "regex",
+ "serde_json",
+ "struson",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
+name = "async-opcua-xml"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "roxmltree",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
 name = "async-trait"
 version = "0.1.83"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -286,8 +563,8 @@ dependencies = [
 name = "custom-codegen"
 version = "0.1.0"
 dependencies = [
+ "async-opcua",
  "log",
- "opcua",
  "serde",
  "serde_json",
  "serde_with",
@@ -459,9 +736,9 @@ dependencies = [
 name = "external-tests"
 version = "0.1.0"
 dependencies = [
+ "async-opcua",
  "futures",
  "log",
- "opcua",
  "serde",
  "serde_json",
  "tokio",
@@ -1117,283 +1394,6 @@ name = "once_cell"
 version = "1.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1261fe7e33c73b354eab43b1273a57c8f967d0391e80353e51f764ac02cf6775"
-
-[[package]]
-name = "opcua"
-version = "0.13.0"
-dependencies = [
- "async-trait",
- "bytes",
- "chrono",
- "env_logger",
- "log",
- "opcua",
- "opcua-client",
- "opcua-core",
- "opcua-core-namespace",
- "opcua-crypto",
- "opcua-macros",
- "opcua-nodes",
- "opcua-server",
- "opcua-types",
- "serde_json",
- "tempdir",
- "tokio",
- "tokio-util",
-]
-
-[[package]]
-name = "opcua-certificate-creator"
-version = "0.13.0"
-dependencies = [
- "opcua",
- "pico-args",
-]
-
-[[package]]
-name = "opcua-chess-server"
-version = "0.13.0"
-dependencies = [
- "opcua",
- "tokio",
- "uci",
-]
-
-[[package]]
-name = "opcua-client"
-version = "0.13.0"
-dependencies = [
- "arc-swap",
- "async-trait",
- "chrono",
- "futures",
- "hashbrown 0.15.2",
- "log",
- "opcua-core",
- "opcua-crypto",
- "opcua-nodes",
- "opcua-types",
- "opcua-xml",
- "parking_lot",
- "rsa",
- "serde",
- "tokio",
- "tokio-util",
-]
-
-[[package]]
-name = "opcua-codegen"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "chrono",
- "convert_case",
- "log",
- "opcua-xml",
- "prettyplease",
- "proc-macro2",
- "quote",
- "regex",
- "roxmltree",
- "serde",
- "serde_json",
- "serde_yaml",
- "syn 2.0.90",
- "thiserror",
- "uuid",
-]
-
-[[package]]
-name = "opcua-core"
-version = "0.13.0"
-dependencies = [
- "bytes",
- "chrono",
- "log",
- "opcua-crypto",
- "opcua-types",
- "parking_lot",
- "serde",
- "serde_yaml",
- "thiserror",
- "tokio",
- "tokio-util",
- "url",
-]
-
-[[package]]
-name = "opcua-core-namespace"
-version = "0.13.0"
-dependencies = [
- "opcua-nodes",
- "opcua-types",
-]
-
-[[package]]
-name = "opcua-crypto"
-version = "0.13.0"
-dependencies = [
- "aes",
- "cbc",
- "chrono",
- "const-oid",
- "gethostname",
- "hmac",
- "log",
- "opcua-types",
- "rand 0.8.5",
- "rsa",
- "serde",
- "sha1",
- "sha2",
- "tempdir",
- "x509-cert",
-]
-
-[[package]]
-name = "opcua-demo-server"
-version = "0.13.0"
-dependencies = [
- "chrono",
- "log",
- "log4rs",
- "opcua",
- "pico-args",
- "rand 0.8.5",
- "tokio",
- "tokio-util",
-]
-
-[[package]]
-name = "opcua-discovery-client"
-version = "0.13.0"
-dependencies = [
- "opcua",
- "pico-args",
- "tokio",
-]
-
-[[package]]
-name = "opcua-event-client"
-version = "0.13.0"
-dependencies = [
- "opcua",
- "pico-args",
- "tokio",
-]
-
-[[package]]
-name = "opcua-macros"
-version = "0.1.0"
-dependencies = [
- "base64 0.22.1",
- "convert_case",
- "proc-macro2",
- "quote",
- "syn 2.0.90",
- "uuid",
-]
-
-[[package]]
-name = "opcua-mqtt-client"
-version = "0.13.0"
-dependencies = [
- "opcua",
- "pico-args",
- "rumqttc",
- "tokio",
-]
-
-[[package]]
-name = "opcua-nodes"
-version = "0.13.0"
-dependencies = [
- "bitflags",
- "hashbrown 0.15.2",
- "log",
- "opcua-macros",
- "opcua-nodes",
- "opcua-types",
- "opcua-xml",
- "regex",
- "thiserror",
-]
-
-[[package]]
-name = "opcua-server"
-version = "0.13.0"
-dependencies = [
- "arc-swap",
- "async-trait",
- "bitflags",
- "chrono",
- "futures",
- "hashbrown 0.15.2",
- "log",
- "opcua-client",
- "opcua-core",
- "opcua-core-namespace",
- "opcua-crypto",
- "opcua-nodes",
- "opcua-types",
- "parking_lot",
- "postcard",
- "regex",
- "serde",
- "serde_json",
- "tokio",
- "tokio-util",
-]
-
-[[package]]
-name = "opcua-simple-client"
-version = "0.13.0"
-dependencies = [
- "log",
- "opcua",
- "pico-args",
- "tokio",
-]
-
-[[package]]
-name = "opcua-simple-server"
-version = "0.13.0"
-dependencies = [
- "chrono",
- "log",
- "opcua",
- "tokio",
-]
-
-[[package]]
-name = "opcua-types"
-version = "0.13.0"
-dependencies = [
- "base64 0.22.1",
- "bitflags",
- "byteorder",
- "chrono",
- "hashbrown 0.15.2",
- "log",
- "opcua-macros",
- "opcua-types",
- "opcua-xml",
- "regex",
- "serde_json",
- "struson",
- "thiserror",
- "uuid",
-]
-
-[[package]]
-name = "opcua-xml"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "roxmltree",
- "thiserror",
- "uuid",
-]
 
 [[package]]
 name = "openssl-probe"

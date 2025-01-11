@@ -19,18 +19,18 @@ As the project proceeds more functionality will be added with a lot of code back
 
 OPC UA for Rust is split over several crates which are periodically published:
 
-* [`lib`](../lib) - a mostly empty wrapper crate that re-exports the other crates based on enabled features.
-* [`opcua-types`](../opcua-types) - contains machine generated types and handwritten types
-* [`opcua-core`](../opcua-core) - contains functionality common to client and server such as encoding / decoding chunks.
-* [`opcua-crypto`](../opcua-crypto) - contains all encryption functionality
-* [`opcua-client`](../opcua-client) - contains the client side API
-* [`opcua-server`](../opcua-server) - contains the server side API. The server may optionally use `opcua-client` to register the server with a local discovery server.
-* [`opcua-nodes`](../opcua-nodes) - contains the `NodeType` as well as types necessary to define the core namespace.
-* [`opcua-core-namespace`](../opcua-core-namespace) - contains the generated code for populating the core namespace.
-* [`opcua-xml](../opcua-xml) - contains tools for parsing various OPC-UA XML files. Used by opcua-codegen and by opcua-nodes for loading NodeSet2 files at runtime. Only included with the `xml` feature.
-* [`opcua-macros`](../opcua-macros) - procedural macros for encoding, decoding, events, and likely more in the future.
-* [`opcua-codegen`](../opcua-codegen) - a command line tool for generating code based on OPC-UA XML files.
-* [`opcua-certificate-creator`](../tools/certificate-creator) - a command-line tool for creating OPC UA compatible public cert and private key.
+* [`async-opcua`](../async-opcua) - a mostly empty wrapper crate that re-exports the other crates based on enabled features.
+* [`async-opcua-types`](../async-opcua-types) - contains machine generated types and handwritten types
+* [`async-opcua-core`](../async-opcua-core) - contains functionality common to client and server such as encoding / decoding chunks.
+* [`async-opcua-crypto`](../async-opcua-crypto) - contains all encryption functionality
+* [`async-opcua-client`](../async-opcua-client) - contains the client side API
+* [`async-opcua-server`](../async-opcua-server) - contains the server side API. The server may optionally use `async-opcua-client` to register the server with a local discovery server.
+* [`async-opcua-nodes`](../async-opcua-nodes) - contains the `NodeType` as well as types necessary to define the core namespace.
+* [`async-opcua-core-namespace`](../async-opcua-core-namespace) - contains the generated code for populating the core namespace.
+* [`async-opcua-xml](../async-opcua-xml) - contains tools for parsing various OPC-UA XML files. Used by async-opcua-codegen and by async-opcua-nodes for loading NodeSet2 files at runtime. Only included with the `xml` feature.
+* [`async-opcua-macros`](../async-opcua-macros) - procedural macros for encoding, decoding, events, and likely more in the future.
+* [`async-opcua-codegen`](../async-opcua-codegen) - a command line tool for generating code based on OPC-UA XML files.
+* [`async-opcua-certificate-creator`](../tools/certificate-creator) - a command-line tool for creating OPC UA compatible public cert and private key.
 
 These are all published on [crates.io](https://crates.io). The API tend to receive breaking changes between releases but the functionality grows and becomes more complete.
 
@@ -67,7 +67,7 @@ for something that adds variables to the address space and changes their values.
 
 ## Types
 
-OPC UA defines a lot of types. Some of those correspond to Rust primitives while others are types, structures or enums which are used by the protocol. All types are defined in the [`opcua-types`](../opcua-types) crate.
+OPC UA defines a lot of types. Some of those correspond to Rust primitives while others are types, structures or enums which are used by the protocol. All types are defined in the [`async-opcua-types`](../async-opcua-types) crate.
 
 All types can be encoded / decoded to a stream according to the opc.tcp:// binary transport. They do so by implementing a `BinaryEncodable` and `BinaryDecodable` traits. The three functions on this trait allow a struct to be deserialized, serialized, or the byte size of it to be calculated.
 
@@ -128,9 +128,9 @@ A `Variant` is a special catch-all enum which can hold any other primitive or ba
 
 ### Machine generated types
 
-Machine generated types reside in `opcua-types/src/generated/types`. The `enums.rs` holds all of the enumerations. A special `src/impls.rs` contains additional hand written functions that are associated with types.
+Machine generated types reside in `async-opcua-types/src/generated/types`. The `enums.rs` holds all of the enumerations. A special `src/impls.rs` contains additional hand written functions that are associated with types.
 
-All these are generated using `opcua-codegen`. The configuration used to generate the core namespace is found [here](../code_gen_config.yml).
+All these are generated using `async-opcua-codegen`. The configuration used to generate the core namespace is found [here](../code_gen_config.yml).
 
 ## Handling OPC UA names in Rust
 
@@ -227,7 +227,7 @@ References are managed by a `References` struct which has a map of vectors of ou
 
 We define a trait `NodeSetImport` for methods that import namespaces. This is implemented by a struct in each generated nodeset. The built-in namespace is called `CoreNamespace`. An `AddressSpace` struct can import a nodeset by calling `import_node_set`.
 
-`opcua-codegen` can be used to generate nodeset imports by parsing `NodeSet2` files. This is mostly useful for namespaces consisting of just types, since we also generate event types. If all you want to do is import a nodeset, it may be easier (and kinder on compile times) to use `NodeSet2Import` from `opcua-nodes` to import a `NodeSet2.xml` file at runtime.
+`async-opcua-codegen` can be used to generate nodeset imports by parsing `NodeSet2` files. This is mostly useful for namespaces consisting of just types, since we also generate event types. If all you want to do is import a nodeset, it may be easier (and kinder on compile times) to use `NodeSet2Import` from `async-opcua-nodes` to import a `NodeSet2.xml` file at runtime.
 
 ## Networking
 

@@ -14,5 +14,4 @@ serde_json = { workspace = true }
 log = { workspace = true }
 futures = { workspace = true }
 
-opcua = { path = "../../lib" }
-
+async-opcua = { path = "../../async-opcua" }

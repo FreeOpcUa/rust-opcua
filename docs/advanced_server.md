@@ -97,7 +97,7 @@ This does not need to concern itself with the details of implementing methods li
 
 For simple synchrnous sampling you can use the `SyncSampler` utility from the server library.
 
-For an example of how to use the `InMemoryNodeManager`, have a look at the [`CoreNodeManager`](../opcua-server/src/node_manager/memory/core.rs), which implements a node manager for the core namespace, including method calls, different sources for data being Read, and more.
+For an example of how to use the `InMemoryNodeManager`, have a look at the [`CoreNodeManager`](../async-opcua-server/src/node_manager/memory/core.rs), which implements a node manager for the core namespace, including method calls, different sources for data being Read, and more.
 
 ## NodeManager trait
 
@@ -169,7 +169,7 @@ Typically you want to implement at least a few other methods:
  - `translate_browse_paths_to_node_ids`, most node managers can implement this by just calling `impl_translate_browse_paths_using_browse`.
  - `create_monitored_items`, `modify_monitored_items`, `set_monitoring_mode`, and `delete_monitored_items`, if you want to support subscriptions on nodes in this node manager. In this case you will need to handle subscriptions for non-value nodes as well, if you want to support that. Note that if you always call `SubscriptionCache::notify_data_change` when something changes, you don't need to add any methods for managing monitored items.
 
-For a real node manager that implements the `NodeManager` trait directly, see [`DiagnosticsNodeManager`](../opcua-server/src/node_manager/memory/diagnostics.rs).
+For a real node manager that implements the `NodeManager` trait directly, see [`DiagnosticsNodeManager`](../async-opcua-server/src/node_manager/memory/diagnostics.rs).
 
 ### Read
 

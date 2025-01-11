@@ -1,0 +1,34 @@
+[package]
+name = "async-opcua-nodes"
+version = "0.13.0"
+description = "OPC UA node representation and import framework"
+authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/freeopcua/rust-opcua"
+repository = "https://github.com/freeopcua/rust-opcua"
+license = "MPL-2.0"
+keywords = ["opcua", "opc", "ua"]
+categories = ["embedded", "network-programming"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+edition = "2021"
+
+[lib]
+name = "opcua_nodes"
+
+[features]
+xml = ["async-opcua-types/xml", "async-opcua-xml"]
+
+[dependencies]
+bitflags = { workspace = true }
+hashbrown = { workspace = true }
+log = { workspace = true }
+regex = { workspace = true }
+thiserror = { workspace = true }
+
+async-opcua-types = { path = "../async-opcua-types" }
+async-opcua-macros = { path = "../async-opcua-macros" }
+async-opcua-xml = { path = "../async-opcua-xml", optional = true }
+
+
+[dev-dependencies]
+async-opcua-nodes = { path = ".", features = ["xml"] }

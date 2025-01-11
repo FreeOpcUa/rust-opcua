@@ -22,7 +22,7 @@ your code uses `std::sync` types for other reasons that you need to resolve manu
 OPC UA for Rust is now a single crate instead of many crates as it used to be. This makes it simpler to use, and also maintain and publish. If you are using 0.9 or below, you will have to make some minor adjustments to use the new
 layout.
 
-In your Cargo.toml, reference the `opcua` crate instead of either `opcua-server` or `opcua-client` and specify `client` and/or `server` in the features, e.g.
+In your Cargo.toml, reference the `opcua` crate instead of either `async-opcua-server` or `async-opcua-client` and specify `client` and/or `server` in the features, e.g.
 
 ```toml
 [dependencies]

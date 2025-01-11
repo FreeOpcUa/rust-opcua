@@ -1,0 +1,70 @@
+[package]
+name = "async-opcua"
+version = "0.13.0"
+description = "OPC UA client and server API"
+authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/freeopcua/rust-opcua"
+repository = "https://github.com/freeopcua/rust-opcua"
+license = "MPL-2.0"
+keywords = ["opcua", "opc", "ua"]
+categories = ["embedded", "network-programming"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+edition = "2021"
+
+[lib]
+name = "opcua"
+
+[features]
+default = ["server", "client"]
+all = ["server", "client", "console-logging"]
+# Server default settings
+server = ["base-server", "generated-address-space"]
+# Base server, without the core address space and discovery server registration
+base-server = ["async-opcua-server", "async-opcua-nodes"]
+# Client default settings
+client = ["async-opcua-client"]
+# Console logging just installs a logger that writes out to the screen, useful for general logging
+console-logging = ["env_logger"]
+# The json feature adds serialize/deserialize to all OPC-UA types.
+json = ["async-opcua-types/json"]
+# Includes all the code to populate the address space with the default node set. This is something that embedded
+# systems may or may not require.
+generated-address-space = [
+    "async-opcua-server/generated-address-space",
+    "async-opcua-core-namespace",
+]
+# Allows a server to register itself with a local discovery server. It does so by becoming a client to the LDS,
+# which brings in a dependency to async-opcua-client. Omitting the feature saves some memory.
+discovery-server-registration = [
+    "async-opcua-server/discovery-server-registration",
+]
+# Methods for XML parsing and loading of nodesets from XML.
+xml = ["async-opcua-types/xml", "async-opcua-nodes/xml"]
+
+
+[dependencies]
+chrono = { workspace = true }
+env_logger = { version = "0.10", optional = true }
+log = { workspace = true }
+
+async-opcua-types = { path = "../async-opcua-types" }
+async-opcua-crypto = { path = "../async-opcua-crypto" }
+async-opcua-core = { path = "../async-opcua-core" }
+async-opcua-client = { path = "../async-opcua-client", optional = true }
+async-opcua-server = { path = "../async-opcua-server", optional = true, default-features = false }
+async-opcua-nodes = { path = "../async-opcua-nodes", optional = true }
+async-opcua-core-namespace = { path = "../async-opcua-core-namespace", optional = true }
+
+async-opcua-macros = { path = "../async-opcua-macros" }
+
+[dev-dependencies]
+async-trait = { workspace = true }
+bytes = { workspace = true }
+serde_json = { workspace = true }
+tempdir = "0.3"
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+
+# Include console-logging and json when building tests
+async-opcua = { path = ".", features = ["console-logging", "json", "xml"] }

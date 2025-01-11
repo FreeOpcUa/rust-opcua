@@ -299,7 +299,7 @@ OPC UA for Rust provides an extensive amount of logging at error, warn, info, de
 
 ### Console logging
 
-For convenience OPC UA for Rust provides a simple `opcua-console-logging` crate that wraps [env_logger](https://docs.rs/env_logger/0.6.2/env_logger/) and writes out logging information to stdout. To use it, set an `RUST_OPCUA_LOG` environment variable (not `RUST_LOG`), otherwise following the documentation in `env_logger`. e.g.
+For convenience OPC UA for Rust provides a simple `async-opcua-console-logging` crate that wraps [env_logger](https://docs.rs/env_logger/0.6.2/env_logger/) and writes out logging information to stdout. To use it, set an `RUST_OPCUA_LOG` environment variable (not `RUST_LOG`), otherwise following the documentation in `env_logger`. e.g.
 
 ```shell script
 export RUST_OPCUA_LOG=debug

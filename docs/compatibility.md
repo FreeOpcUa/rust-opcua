@@ -133,7 +133,7 @@ The server and client support the following user identity tokens
 
 OPC UA for Rust uses cryptographic algorithms for signing, verifying, encrypting and decrypting data. In addition it creates, loads and saves certificates and keys.
 
-OpenSSL is used for encryption although it would be nice to go to a pure Rust implementation assuming a crate delivers everything required. The crypto+OpenSSL code is isolated in an `opcua-crypto` crate.
+OpenSSL is used for encryption although it would be nice to go to a pure Rust implementation assuming a crate delivers everything required. The crypto+OpenSSL code is isolated in an `async-opcua-crypto` crate.
 
 You must read the [setup](./setup.md) to configure OpenSSL for your environment.
 
@@ -169,13 +169,13 @@ The `tools/certificate-creator` tool will create a demo public self-signed cert 
 It can be built from source, or the crate:
 
 ```bash
-$ cargo install --force opcua-certificate-creator
+$ cargo install --force async-opcua-certificate-creator
 ```
 
 A minimal usage might be something like this inside samples/simple-client and/or samples/simple-server:
 
 ```bash
-$ opcua-certificate-creator --pkipath ./pki
+$ async-opcua-certificate-creator --pkipath ./pki
 ```
 
 A full list of arguments can be obtained by ```--help``` and you are advised to set fields such

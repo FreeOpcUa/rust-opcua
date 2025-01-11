@@ -58,7 +58,7 @@ impl Default for Args {
             PathBuf::from(".")
         } else {
             // Server src dir
-            PathBuf::from("../../lib/src/server/html")
+            PathBuf::from("../../async-opcua/src/server/html")
         };
 
         Self {

@@ -100,7 +100,7 @@ async fn main() -> Result<(), ()> {
                     return;
                 };
                 let topic = format!(
-                    "opcua-rust/mqtt-client/{}/{}",
+                    "async-opcua-rust/mqtt-client/{}/{}",
                     node_id.namespace, node_id.identifier
                 );
                 let value = if let Some(ref value) = data_value.value {

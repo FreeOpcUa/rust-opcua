@@ -1,0 +1,53 @@
+[package]
+name = "async-opcua-server"
+version = "0.13.0"
+description = "OPC UA server API"
+authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/freeopcua/rust-opcua"
+repository = "https://github.com/freeopcua/rust-opcua"
+license = "MPL-2.0"
+keywords = ["opcua", "opc", "ua"]
+categories = ["embedded", "network-programming"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+edition = "2021"
+
+[lib]
+name = "opcua_server"
+
+[features]
+default = ["discovery-server-registration", "generated-address-space"]
+# Includes all the code to populate the address space with the default node set. This is something that embedded
+# systems may or may not require.
+generated-address-space = ["async-opcua-core-namespace"]
+# Includes serialize/deserialize for OPC-UA types.
+json = ["async-opcua-types/json"]
+
+# Allows a server to register itself with a local discovery server. It does so by becoming a client to the LDS,
+# which brings in a dependency to async-opcua-client. Omitting the feature saves some memory.
+discovery-server-registration = ["async-opcua-client"]
+
+[dependencies]
+arc-swap = { workspace = true }
+async-trait = { workspace = true }
+bitflags = { workspace = true }
+chrono = { workspace = true }
+futures = { workspace = true }
+hashbrown = { workspace = true }
+log = { workspace = true }
+parking_lot = { workspace = true }
+regex = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+tokio-util = { workspace = true }
+postcard = { workspace = true }
+
+
+async-opcua-types = { path = "../async-opcua-types" }
+async-opcua-crypto = { path = "../async-opcua-crypto" }
+async-opcua-core = { path = "../async-opcua-core" }
+async-opcua-nodes = { path = "../async-opcua-nodes" }
+
+async-opcua-client = { path = "../async-opcua-client", optional = true }
+async-opcua-core-namespace = { path = "../async-opcua-core-namespace", optional = true }

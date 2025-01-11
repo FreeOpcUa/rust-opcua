@@ -33,7 +33,7 @@ cargo run
 Use an OPC UA client to connect to the server, e.g. if you have NodeJS you can do this:
 
 ```
-npm install -g opcua-commander
-opcua-commander -e opc.tcp://127.0.0.1:4855
+npm install -g async-opcua-commander
+async-opcua-commander -e opc.tcp://127.0.0.1:4855
 ```
 

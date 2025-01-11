@@ -1,0 +1,21 @@
+[package]
+name = "async-opcua-xml"
+version = "0.1.0"
+edition = "2021"
+description = "OPC UA XML loading library"
+authors = ["Einar Omang <einar@omang.com>"]
+homepage = "https://github.com/freeopcua/rust-opcua"
+repository = "https://github.com/freeopcua/rust-opcua"
+license = "MPL-2.0"
+keywords = ["opcua", "opc", "ua"]
+readme = "../README.md"
+documentation = "https://docs.rs/opcua/"
+
+[lib]
+name = "opcua_xml"
+
+[dependencies]
+chrono = { workspace = true }
+roxmltree = { workspace = true }
+thiserror = { workspace = true }
+uuid = { workspace = true }

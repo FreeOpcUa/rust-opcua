@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
 members = [
-    "lib",
+    "async-opcua",
     "samples/*",
-    "opcua-*",
+    "async-opcua-*",
     "tools/certificate-creator",
     "dotnet-tests/external-tests",
 ]

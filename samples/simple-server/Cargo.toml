@@ -1,5 +1,5 @@
 [package]
-name = "opcua-simple-server"
+name = "async-opcua-simple-server"
 version = "0.13.0"
 authors = ["Adam Lock <locka99@gmail.com>"]
 edition = "2021"
@@ -9,7 +9,7 @@ chrono = { workspace = true }
 log = { workspace = true }
 tokio = { workspace = true }
 
-[dependencies.opcua]
-path = "../../lib"
+[dependencies.async-opcua]
+path = "../../async-opcua"
 features = ["server", "console-logging"]
 default-features = false

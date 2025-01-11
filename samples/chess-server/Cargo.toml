@@ -1,5 +1,5 @@
 [package]
-name = "opcua-chess-server"
+name = "async-opcua-chess-server"
 version = "0.13.0"
 authors = ["Adam Lock <locka99@gmail.com>"]
 edition = "2021"
@@ -8,6 +8,6 @@ edition = "2021"
 tokio = { workspace = true }
 uci = "0.1.1"
 
-[dependencies.opcua]
-path = "../../lib"
+[dependencies.async-opcua]
+path = "../../async-opcua"
 features = ["server", "console-logging"]

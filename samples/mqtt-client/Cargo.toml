@@ -1,5 +1,5 @@
 [package]
-name = "opcua-mqtt-client"
+name = "async-opcua-mqtt-client"
 version = "0.13.0"
 authors = ["Adam Lock <locka99@gmail.com>"]
 edition = "2021"
@@ -9,6 +9,6 @@ pico-args = "0.5"
 rumqttc = "0.23"
 tokio = { workspace = true }
 
-[dependencies.opcua]
-path = "../../lib"
+[dependencies.async-opcua]
+path = "../../async-opcua"
 features = ["client", "console-logging"]

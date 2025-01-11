@@ -50,7 +50,7 @@ cargo install cargo-fuzz
 To run:
 
 ```bash
-cd opcua/lib
+cd opcua/async-opcua
 rustup default nightly
 cargo fuzz list
 cargo fuzz run fuzz_deserialize

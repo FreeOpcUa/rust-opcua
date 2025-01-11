@@ -1,5 +1,5 @@
 [package]
-name = "opcua-certificate-creator"
+name = "async-opcua-certificate-creator"
 version = "0.13.0"
 description = "OPC UA certificate creator"
 authors = ["Adam Lock <locka99@gmail.com>"]
@@ -12,5 +12,5 @@ edition = "2021"
 [dependencies]
 pico-args = "0.5"
 
-[dependencies.opcua]
-path = "../../lib"
+[dependencies.async-opcua]
+path = "../../async-opcua"

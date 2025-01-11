@@ -10,11 +10,11 @@ Encryption in OPC UA for Rust is dictated by the specification, particularly:
 This document summarizes what algorithms are used by the implementation and issues concerned with moving away from OpenSSL
 to a pure Rust crypto library.
 
-## opcua-crypto
+## async-opcua-crypto
 
 OPC UA for Rust is implemented in various crates that encapsulate server, client and common code.
 
-The crypto functionality is contained in the `opcua-crypto` crate that both the server and client depend on. This provides functions and wrappers that call various rust cryptography packages from the [`rustcrypto`](https://github.com/rustcrypto) project.
+The crypto functionality is contained in the `async-opcua-crypto` crate that both the server and client depend on. This provides functions and wrappers that call various rust cryptography packages from the [`rustcrypto`](https://github.com/rustcrypto) project.
 
 * [`hmac`](https://github.com/RustCrypto/MACs/tree/master/hmac)
 * [`sha2`](https://github.com/RustCrypto/hashes/tree/master/sha2)
