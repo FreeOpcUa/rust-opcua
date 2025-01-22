@@ -735,10 +735,10 @@ impl RegisterNodeItem {
 /// without a complex implementation.
 ///
 /// Arguments are simply the inputs to translate_browse_paths on `NodeManager`.
-pub async fn impl_translate_browse_paths_using_browse<'a>(
+pub async fn impl_translate_browse_paths_using_browse(
     mgr: &(impl NodeManager + Send + Sync + 'static),
     context: &RequestContext,
-    nodes: &mut [&mut BrowsePathItem<'a>],
+    nodes: &mut [&mut BrowsePathItem<'_>],
 ) -> Result<(), StatusCode> {
     // For unmatched browse names we first need to check if the node exists.
     let mut to_get_metadata: Vec<_> = nodes

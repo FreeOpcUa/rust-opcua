@@ -158,7 +158,7 @@ impl<'a> CreateSession<'a> {
     }
 }
 
-impl<'b> UARequest for CreateSession<'b> {
+impl UARequest for CreateSession<'_> {
     type Out = CreateSessionResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>

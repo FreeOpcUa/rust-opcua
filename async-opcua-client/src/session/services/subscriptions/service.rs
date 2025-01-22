@@ -146,7 +146,7 @@ impl<'a> CreateSubscription<'a> {
     }
 }
 
-impl<'b> UARequest for CreateSubscription<'b> {
+impl UARequest for CreateSubscription<'_> {
     type Out = CreateSubscriptionResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -298,7 +298,7 @@ impl<'a> ModifySubscription<'a> {
     }
 }
 
-impl<'b> UARequest for ModifySubscription<'b> {
+impl UARequest for ModifySubscription<'_> {
     type Out = ModifySubscriptionResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -404,7 +404,7 @@ impl<'a> SetPublishingMode<'a> {
     }
 }
 
-impl<'b> UARequest for SetPublishingMode<'b> {
+impl UARequest for SetPublishingMode<'_> {
     type Out = SetPublishingModeResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -620,7 +620,7 @@ impl<'a> DeleteSubscriptions<'a> {
     }
 }
 
-impl<'b> UARequest for DeleteSubscriptions<'b> {
+impl UARequest for DeleteSubscriptions<'_> {
     type Out = DeleteSubscriptionsResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -743,7 +743,7 @@ impl<'a> CreateMonitoredItems<'a> {
     }
 }
 
-impl<'b> UARequest for CreateMonitoredItems<'b> {
+impl UARequest for CreateMonitoredItems<'_> {
     type Out = CreateMonitoredItemsResponse;
 
     async fn send<'a>(
@@ -913,7 +913,7 @@ impl<'a> ModifyMonitoredItems<'a> {
     }
 }
 
-impl<'b> UARequest for ModifyMonitoredItems<'b> {
+impl UARequest for ModifyMonitoredItems<'_> {
     type Out = ModifyMonitoredItemsResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -1061,7 +1061,7 @@ impl<'a> SetMonitoringMode<'a> {
     }
 }
 
-impl<'b> UARequest for SetMonitoringMode<'b> {
+impl UARequest for SetMonitoringMode<'_> {
     type Out = SetMonitoringModeResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -1215,7 +1215,7 @@ impl<'a> SetTriggering<'a> {
     }
 }
 
-impl<'b> UARequest for SetTriggering<'b> {
+impl UARequest for SetTriggering<'_> {
     type Out = SetTriggeringResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>
@@ -1370,7 +1370,7 @@ impl<'a> DeleteMonitoredItems<'a> {
     }
 }
 
-impl<'b> UARequest for DeleteMonitoredItems<'b> {
+impl UARequest for DeleteMonitoredItems<'_> {
     type Out = DeleteMonitoredItemsResponse;
 
     async fn send<'a>(self, channel: &'a crate::AsyncSecureChannel) -> Result<Self::Out, StatusCode>

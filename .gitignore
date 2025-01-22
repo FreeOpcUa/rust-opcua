@@ -9,8 +9,8 @@ log/
 **/pki-client
 **/pki-server
 3rd-party/open62541/build/
-lib/pki*
-lib/certs
+async-opcua/pki*
+async-opcua/certs
 
 **/bin
 **/obj

@@ -613,8 +613,7 @@ async fn test_recursive_browser() {
 
     assert!(rs
         .iter()
-        .find(|r| *r.target_node == VariableId::BaseEventType_EventId)
-        .is_some());
+        .any(|r| *r.target_node == VariableId::BaseEventType_EventId));
 }
 
 // Test that the future returned by `browser.run...` is `Send`
