@@ -1,6 +1,6 @@
 [package]
 name = "async-opcua-core"
-version = "0.13.0"                                                           # OPCUARustVersion
+version = "0.14.0"
 description = "OPC UA core utils for client and server"
 authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
 homepage = "https://github.com/freeopcua/rust-opcua"
@@ -26,8 +26,8 @@ tokio = { workspace = true }
 tokio-util = { workspace = true }
 url = { workspace = true }
 
-async-opcua-types = { path = "../async-opcua-types" }
-async-opcua-crypto = { path = "../async-opcua-crypto" }
+async-opcua-types = { path = "../async-opcua-types", version = "0.14.0" }
+async-opcua-crypto = { path = "../async-opcua-crypto", version = "0.14.0" }
 thiserror = { workspace = true }
 
 

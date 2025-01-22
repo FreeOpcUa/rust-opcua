@@ -1,6 +1,6 @@
 [package]
 name = "async-opcua-types"
-version = "0.13.0"
+version = "0.14.0"
 description = "OPC UA data types"
 authors = ["Adam Lock <locka99@gmail.com>", "Einar Omang <einar@omang.com>"]
 homepage = "https://github.com/freeopcua/rust-opcua"
@@ -29,11 +29,11 @@ chrono = { workspace = true }
 byteorder = { workspace = true }
 base64 = { workspace = true }
 thiserror = { workspace = true }
-async-opcua-macros = { path = "../async-opcua-macros" }
 
 struson = { workspace = true, optional = true }
 
-async-opcua-xml = { path = "../async-opcua-xml", optional = true }
+async-opcua-macros = { path = "../async-opcua-macros", version = "0.14.0" }
+async-opcua-xml = { path = "../async-opcua-xml", optional = true, version = "0.14.0" }
 
 [dev-dependencies]
 async-opcua-types = { path = ".", features = ["xml", "json"] }
