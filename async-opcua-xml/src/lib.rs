@@ -95,9 +95,9 @@ impl FromValue for bool {
 
 impl<'input, T> XmlLoad<'input> for T
 where
-    T: FromValue,
+    T: FromValue + Default,
 {
     fn load(node: &Node<'_, 'input>) -> Result<Self, XmlError> {
-        T::from_value(node, "content", node.try_contents()?)
+        T::from_value(node, "content", node.try_contents().unwrap_or_default())
     }
 }
