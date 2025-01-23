@@ -1,6 +1,6 @@
 # Introduction
 
-[![Build Status](https://github.com/freeopcua/rust-opcua/workflows/OPC%20UA%20for%20Rust/badge.svg)](https://github.com/freeopcua/rust-opcua/actions/workflows/main.yml)
+[![Build Status](https://github.com/freeopcua/async-opcua/workflows/OPC%20UA%20for%20Rust/badge.svg)](https://github.com/freeopcua/async-opcua/actions/workflows/main.yml)
 
 This is an [OPC UA](https://opcfoundation.org/about/opc-technologies/opc-ua/) server / client API implementation for Rust.
 

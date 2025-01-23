@@ -29,7 +29,7 @@ async fn main() {
     let (server, handle) = ServerBuilder::new()
         .with_config_from("../server.conf")
         .build_info(BuildInfo {
-            product_uri: "https://github.com/freeopcua/rust-opcua".into(),
+            product_uri: "https://github.com/freeopcua/async-opcua".into(),
             manufacturer_name: "Rust OPC-UA".into(),
             product_name: "Rust OPC-UA sample server".into(),
             // Here you could use something to inject the build time, version, number at compile time
