@@ -169,7 +169,7 @@ impl<'a> TypeCollector<'a> {
     ) -> Result<(), CodeGenError> {
         // Type must exist, otherwise it's going to cause trouble.
         let Some(node) = self.nodes.get(type_id) else {
-            return Err(CodeGenError::Other(format!(
+            return Err(CodeGenError::other(format!(
                 "Referenced type with id {type_id} not found."
             )));
         };
@@ -227,39 +227,44 @@ impl<'a> TypeCollector<'a> {
                     }
 
                     let Some(target_node) = self.nodes.get(target) else {
-                        return Err(CodeGenError::Other(format!(
+                        return Err(CodeGenError::other(format!(
                             "Node {target} not found in node dict"
-                        )));
+                        ))
+                        .with_context(format!("collecting type {type_id}")));
                     };
 
                     let kind = match &target_node.node {
                         UANode::Object(_) => {
                             let Some(type_def) = type_def else {
-                                return Err(CodeGenError::Other(format!(
+                                return Err(CodeGenError::other(format!(
                                     "Property {target} is missing type definition"
-                                )));
+                                ))
+                                .with_context(format!("collecting type {type_id}")));
                             };
                             FieldKind::Object(type_def)
                         }
                         UANode::Variable(v) => {
                             let Some(type_def) = type_def else {
-                                return Err(CodeGenError::Other(format!(
+                                return Err(CodeGenError::other(format!(
                                     "Property {target} is missing type definition"
-                                )));
+                                ))
+                                .with_context(format!("collecting type {type_id}")));
                             };
                             data_type_id = Some(target_node.lookup_node_id(v.data_type.0.as_str()));
                             FieldKind::Variable(type_def)
                         }
                         UANode::Method(_) => FieldKind::Method,
                         _ => {
-                            return Err(CodeGenError::Other(format!(
+                            return Err(CodeGenError::other(format!(
                                 "Property {target} has unexpected node class"
-                            )))
+                            ))
+                            .with_context(format!("collecting type {type_id}")))
                         }
                     };
 
                     let browse_name = target_node.node.base().browse_name.0.as_str();
-                    let (name, _) = split_qualified_name(browse_name)?;
+                    let (name, _) = split_qualified_name(browse_name)
+                        .map_err(|e| e.with_context(format!("collecting type {type_id}")))?;
 
                     fields.insert(
                         name,

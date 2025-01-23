@@ -19,7 +19,7 @@ pub struct BsdTypeLoader {
 
 fn strip_first_segment<'a>(val: &'a str, sep: &'static str) -> Result<&'a str, CodeGenError> {
     val.split_once(sep)
-        .ok_or_else(|| CodeGenError::WrongFormat(format!("A{sep}B.."), val.to_owned()))
+        .ok_or_else(|| CodeGenError::wrong_format(format!("A{sep}B.."), val))
         .map(|v| v.1)
 }
 
@@ -75,11 +75,16 @@ impl BsdTypeLoader {
 
         for field in item.fields {
             let field_name = to_snake_case(&field.name);
-            let type_name = field
+            let typ = field
                 .type_name
-                .ok_or(CodeGenError::MissingRequiredValue("TypeName"))?;
-            let typ = strip_first_segment(&type_name, ":")?;
-            let typ = self.massage_type_name(typ);
+                .ok_or(CodeGenError::missing_required_value("TypeName"))
+                .and_then(|r| Ok(self.massage_type_name(strip_first_segment(&r, ":")?)))
+                .map_err(|e| {
+                    e.with_context(format!(
+                        "while loading field {} in struct {}",
+                        field_name, item.description.name
+                    ))
+                })?;
 
             if let Some(length_field) = field.length_field {
                 fields_to_add.push(StructureField {
@@ -109,7 +114,12 @@ impl BsdTypeLoader {
 
     fn load_enum(&self, item: EnumeratedType) -> Result<EnumType, CodeGenError> {
         let Some(len) = item.opaque.length_in_bits else {
-            return Err(CodeGenError::MissingRequiredValue("LengthInBits"));
+            return Err(
+                CodeGenError::missing_required_value("LengthInBits").with_context(format!(
+                    "while loading enum {}",
+                    item.opaque.description.name
+                )),
+            );
         };
 
         let len_bytes = ((len as f64) / 8.0).ceil() as u64;
@@ -119,8 +129,12 @@ impl BsdTypeLoader {
             4 => EnumReprType::i32,
             8 => EnumReprType::i64,
             r => {
-                return Err(CodeGenError::Other(format!(
+                return Err(CodeGenError::other(format!(
                     "Unexpected enum length. {r} bytes for {}",
+                    item.opaque.description.name
+                ))
+                .with_context(format!(
+                    "while loading enum {}",
                     item.opaque.description.name
                 )))
             }
@@ -128,10 +142,20 @@ impl BsdTypeLoader {
         let mut variants = Vec::new();
         for val in item.variants {
             let Some(value) = val.value else {
-                return Err(CodeGenError::MissingRequiredValue("Value"));
+                return Err(
+                    CodeGenError::missing_required_value("Value").with_context(format!(
+                        "while loading enum {}",
+                        item.opaque.description.name
+                    )),
+                );
             };
             let Some(name) = val.name else {
-                return Err(CodeGenError::MissingRequiredValue("Name"));
+                return Err(
+                    CodeGenError::missing_required_value("Name").with_context(format!(
+                        "while loading enum {}",
+                        item.opaque.description.name
+                    )),
+                );
             };
 
             variants.push(EnumValue { name, value });
@@ -274,7 +298,7 @@ impl BsdTypeLoader {
                     };
                     let typ = type_names
                         .get(typ)
-                        .ok_or_else(|| CodeGenError::Other(format!("Unknown type: {typ}")))?;
+                        .ok_or_else(|| CodeGenError::other(format!("Unknown type: {typ}")))?;
 
                     let value_rank: Option<i32> =
                         field.attribute("ValueRank").and_then(|v| v.parse().ok());

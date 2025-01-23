@@ -35,7 +35,7 @@ pub fn parse(
         let vals: Vec<_> = line.split(",").collect();
         if vals.len() == 2 {
             let Some(type_name) = type_name else {
-                return Err(CodeGenError::Other(format!("CSV file {file_name} has only two columns, but no type name fallback was specified")));
+                return Err(CodeGenError::other(format!("CSV file {file_name} has only two columns, but no type name fallback was specified")));
             };
             types
                 .entry(type_name.to_owned())
@@ -50,7 +50,7 @@ pub fn parse(
                 .variants
                 .push((vals[1].parse()?, vals[0].to_owned()));
         } else {
-            return Err(CodeGenError::Other(format!(
+            return Err(CodeGenError::other(format!(
                 "CSV file {file_name} is on incorrect format. Expected two or three columns, got {}",
                 vals.len()
             )));

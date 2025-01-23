@@ -268,7 +268,7 @@ impl CodeGenerator {
             let value_token = match item.typ {
                 EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
-                        CodeGenError::Other(format!(
+                        CodeGenError::other(format!(
                             "Unexpected error converting to u8, {} is out of range",
                             value
                         ))
@@ -277,7 +277,7 @@ impl CodeGenerator {
                 }
                 EnumReprType::i16 => {
                     let value: i16 = value.try_into().map_err(|_| {
-                        CodeGenError::Other(format!(
+                        CodeGenError::other(format!(
                             "Unexpected error converting to i16, {} is out of range",
                             value
                         ))
@@ -286,7 +286,7 @@ impl CodeGenerator {
                 }
                 EnumReprType::i32 => {
                     let value: i32 = value.try_into().map_err(|_| {
-                        CodeGenError::Other(format!(
+                        CodeGenError::other(format!(
                             "Unexpected error converting to i32, {} is out of range",
                             value
                         ))
@@ -314,7 +314,7 @@ impl CodeGenerator {
 
         let mut impls = Vec::new();
         let size: usize = item.size.try_into().map_err(|_| {
-            CodeGenError::Other(format!("Value {} does not fit in a usize", item.size))
+            CodeGenError::other(format!("Value {} does not fit in a usize", item.size))
         })?;
         let write_method = Ident::new(&format!("write_{}", item.typ), Span::call_site());
 
@@ -455,7 +455,7 @@ impl CodeGenerator {
             let value_token = match item.typ {
                 EnumReprType::u8 => {
                     let value: u8 = value.try_into().map_err(|_| {
-                        CodeGenError::Other(format!(
+                        CodeGenError::other(format!(
                             "Unexpected error converting to u8, {} is out of range",
                             value
                         ))
@@ -464,7 +464,7 @@ impl CodeGenerator {
                 }
                 EnumReprType::i16 => {
                     let value: i16 = value.try_into().map_err(|_| {
-                        CodeGenError::Other(format!(
+                        CodeGenError::other(format!(
                             "Unexpected error converting to i16, {} is out of range",
                             value
                         ))
@@ -473,7 +473,7 @@ impl CodeGenerator {
                 }
                 EnumReprType::i32 => {
                     let value: i32 = value.try_into().map_err(|_| {
-                        CodeGenError::Other(format!(
+                        CodeGenError::other(format!(
                             "Unexpected error converting to i32, {} is out of range",
                             value
                         ))

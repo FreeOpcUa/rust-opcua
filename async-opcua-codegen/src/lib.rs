@@ -116,7 +116,8 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
         match target {
             CodeGenTarget::Types(t) => {
                 println!("Running data type code generation for {}", t.file_path);
-                let (types, target_namespace) = generate_types(t, root_path)?;
+                let (types, target_namespace) =
+                    generate_types(t, root_path).map_err(|e| e.in_file(&t.file_path))?;
                 println!("Writing {} types to {}", types.len(), t.output_dir);
 
                 let header = make_header(&t.file_path, &[&config.extra_header, &t.extra_header]);
@@ -132,13 +133,15 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
                     }
                 }
 
-                let modules = write_to_directory(&t.output_dir, root_path, &header, types)?;
+                let modules = write_to_directory(&t.output_dir, root_path, &header, types)
+                    .map_err(|e| e.in_file(&t.file_path))?;
                 let mut module_file = create_module_file(modules);
                 module_file
                     .items
                     .extend(type_loader_impl(&object_ids, &target_namespace).into_iter());
 
-                write_module_file(&t.output_dir, root_path, &header, module_file)?;
+                write_module_file(&t.output_dir, root_path, &header, module_file)
+                    .map_err(|e| e.in_file(&t.file_path))?;
             }
             CodeGenTarget::Nodes(n) => {
                 println!("Running node set code generation for {}", n.file_path);
@@ -148,13 +151,19 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
                     CodeGenError::io(&format!("Failed to read file {}", n.file_path), e)
                 })?;
                 let node_set = load_nodeset2_file(&node_set)?;
-                let nodes = node_set.node_set.as_ref().ok_or_else(|| {
-                    CodeGenError::Other("Missing UANodeSet in xml schema".to_owned())
-                })?;
+                let nodes = node_set
+                    .node_set
+                    .as_ref()
+                    .ok_or_else(|| {
+                        CodeGenError::other("Missing UANodeSet in xml schema".to_owned())
+                    })
+                    .map_err(|e| e.in_file(&n.file_path))?;
                 println!("Found {} nodes in node set", nodes.nodes.len());
 
-                let chunks = generate_target(n, nodes, &config.preferred_locale, root_path)?;
-                let module_file = make_root_module(&chunks, n)?;
+                let chunks = generate_target(n, nodes, &config.preferred_locale, root_path)
+                    .map_err(|e| e.in_file(&n.file_path))?;
+                let module_file =
+                    make_root_module(&chunks, n).map_err(|e| e.in_file(&n.file_path))?;
 
                 println!("Writing {} files to {}", chunks.len() + 1, n.output_dir);
 
@@ -176,17 +185,22 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
                                         &format!("Failed to read file {}", n.file_path),
                                         e,
                                     )
-                                })?;
+                                })
+                                .map_err(|e| e.in_file(&n.file_path))?;
                         let node_set = load_nodeset2_file(&node_set)?;
                         p_sets.push((node_set, nodeset_file.import_path.as_str()));
                     }
                     for set in &p_sets {
                         sets.push((
-                            set.0.node_set.as_ref().ok_or_else(|| {
-                                CodeGenError::Other(
-                                    "Missing UANodeSet in dependent xml schema".to_owned(),
-                                )
-                            })?,
+                            set.0
+                                .node_set
+                                .as_ref()
+                                .ok_or_else(|| {
+                                    CodeGenError::other(
+                                        "Missing UANodeSet in dependent xml schema".to_owned(),
+                                    )
+                                })
+                                .map_err(|e| e.in_file(&n.file_path))?,
                             set.1,
                         ));
                     }
@@ -199,19 +213,21 @@ pub fn run_codegen(config: &CodeGenConfig, root_path: &str) -> Result<(), CodeGe
                         &[&config.extra_header, &events_target.extra_header],
                     );
                     let modules =
-                        write_to_directory(&events_target.output_dir, root_path, &header, events)?;
+                        write_to_directory(&events_target.output_dir, root_path, &header, events)
+                            .map_err(|e| e.in_file(&n.file_path))?;
                     write_module_file(
                         &events_target.output_dir,
                         root_path,
                         &header,
                         create_module_file(modules),
-                    )?;
+                    )
+                    .map_err(|e| e.in_file(&n.file_path))?;
                     println!("Created {} event types", cnt);
                 }
             }
             CodeGenTarget::Ids(n) => {
                 println!("Running node ID code generation for {}", n.file_path);
-                let gen = generate_node_ids(n, root_path)?;
+                let gen = generate_node_ids(n, root_path).map_err(|e| e.in_file(&n.file_path))?;
                 let mut file = std::fs::File::options()
                     .create(true)
                     .truncate(true)

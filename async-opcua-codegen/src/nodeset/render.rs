@@ -28,11 +28,11 @@ fn nodeid_regex() -> &'static Regex {
 pub fn split_node_id(id: &str) -> Result<(&str, &str, u16), CodeGenError> {
     let captures = nodeid_regex()
         .captures(id)
-        .ok_or_else(|| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
+        .ok_or_else(|| CodeGenError::other(format!("Invalid nodeId: {}", id)))?;
     let namespace = if let Some(ns) = captures.name("ns") {
         ns.as_str()
             .parse::<u16>()
-            .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?
+            .map_err(|_| CodeGenError::other(format!("Invalid nodeId: {}", id)))?
     } else {
         0
     };
@@ -40,7 +40,7 @@ pub fn split_node_id(id: &str) -> Result<(&str, &str, u16), CodeGenError> {
     let t = captures.name("t").unwrap();
     let idf = t.as_str();
     if idf.len() < 2 {
-        Err(CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
+        Err(CodeGenError::other(format!("Invalid nodeId: {}", id)))?;
     }
     let k = &idf[..2];
     let v = &idf[2..];
@@ -57,7 +57,7 @@ impl RenderExpr for NodeId {
             "i=" => {
                 let i = v
                     .parse::<u32>()
-                    .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", id)))?;
+                    .map_err(|_| CodeGenError::other(format!("Invalid nodeId: {}", id)))?;
                 parse_quote! { #i }
             }
             "s=" => {
@@ -65,17 +65,17 @@ impl RenderExpr for NodeId {
             }
             "g=" => {
                 let uuid = uuid::Uuid::parse_str(v)
-                    .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
+                    .map_err(|e| CodeGenError::other(format!("Invalid nodeId: {}, {e}", id)))?;
                 let bytes = uuid.as_bytes();
                 parse_quote! { opcua::types::Uuid::from_slice(&[#(#bytes)*,]).unwrap() }
             }
             "b=" => {
                 let bytes = base64::engine::general_purpose::STANDARD
                     .decode(v)
-                    .map_err(|e| CodeGenError::Other(format!("Invalid nodeId: {}, {e}", id)))?;
+                    .map_err(|e| CodeGenError::other(format!("Invalid nodeId: {}, {e}", id)))?;
                 parse_quote! { opcua::types::ByteString::from(vec![#(#bytes)*,]) }
             }
-            _ => return Err(CodeGenError::Other(format!("Invalid nodeId: {}", id))),
+            _ => return Err(CodeGenError::other(format!("Invalid nodeId: {}", id))),
         };
 
         let ns_item = if namespace == 0 {
@@ -101,12 +101,12 @@ fn qualified_name_regex() -> &'static Regex {
 pub fn split_qualified_name(name: &str) -> Result<(&str, u16), CodeGenError> {
     let captures = qualified_name_regex()
         .captures(name)
-        .ok_or_else(|| CodeGenError::Other(format!("Invalid qualifiedname: {}", name)))?;
+        .ok_or_else(|| CodeGenError::other(format!("Invalid qualifiedname: {}", name)))?;
 
     let namespace = if let Some(ns) = captures.name("ns") {
         ns.as_str()
             .parse::<u16>()
-            .map_err(|_| CodeGenError::Other(format!("Invalid nodeId: {}", name)))?
+            .map_err(|_| CodeGenError::other(format!("Invalid nodeId: {}", name)))?
     } else {
         0
     };

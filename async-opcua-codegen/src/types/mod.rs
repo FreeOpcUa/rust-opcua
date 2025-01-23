@@ -23,7 +23,8 @@ pub fn generate_types(
     println!("Loading types from {}", target.file_path);
     let data = std::fs::read_to_string(format!("{}/{}", root_path, &target.file_path))
         .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", target.file_path), e))?;
-    let type_dictionary = load_bsd_file(&data)?;
+    let type_dictionary =
+        load_bsd_file(&data).map_err(|e| CodeGenError::from(e).in_file(&target.file_path))?;
     println!(
         "Found {} raw elements in the type dictionary.",
         type_dictionary.elements.len()
@@ -39,7 +40,9 @@ pub fn generate_types(
         type_dictionary,
     )?;
     let target_namespace = type_loader.target_namespace();
-    let types = type_loader.from_bsd()?;
+    let types = type_loader
+        .from_bsd()
+        .map_err(|e| e.in_file(&target.file_path))?;
     println!("Generated code for {} types", types.len());
 
     let mut types_import_map = basic_types_import_map();

@@ -41,7 +41,7 @@ impl<'a> EventGenerator<'a> {
         for (ty, _) in self.types.iter().filter(|t| {
             matches!(t.1.kind, TypeKind::EventType) && t.1.nodeset_index == self.nodeset_index
         }) {
-            self.add_type_to_render(ty, &mut collected)?;
+            self.add_type_to_render(ty, &mut collected);
         }
 
         let mut items = Vec::new();
@@ -61,45 +61,39 @@ impl<'a> EventGenerator<'a> {
             && (typ.parent.is_none() || typ.parent.is_some_and(|t| self.is_simple(t)))
     }
 
-    fn add_type_to_render(
-        &self,
-        ty: &'a str,
-        collected: &mut HashMap<&'a str, CollectedType<'a>>,
-    ) -> Result<(), CodeGenError> {
+    fn add_type_to_render(&self, ty: &'a str, collected: &mut HashMap<&'a str, CollectedType<'a>>) {
         if collected.contains_key(ty) {
-            return Ok(());
+            return;
         }
 
         // Don't render the base event type.
         if ty == "i=2041" {
-            return Ok(());
+            return;
         }
         // Don't render simple types.
         if self.is_simple(ty) {
-            return Ok(());
+            return;
         }
 
         let typ = self.types.get(ty).unwrap();
 
         if typ.nodeset_index != self.nodeset_index {
-            return Ok(());
+            return;
         }
 
         collected.insert(ty, typ.clone());
         for field in typ.fields.values() {
             match field.type_id {
                 FieldKind::Object(r) | FieldKind::Variable(r) => {
-                    self.add_type_to_render(r, collected)?
+                    self.add_type_to_render(r, collected);
                 }
                 FieldKind::Method => (),
             }
         }
 
         if let Some(parent) = typ.parent {
-            self.add_type_to_render(parent, collected)?;
+            self.add_type_to_render(parent, collected);
         }
-
-        Ok(())
     }
 
     fn render_type(&self, ty: CollectedType<'a>, id: &'a str) -> Result<EventItem, CodeGenError> {
@@ -107,15 +101,16 @@ impl<'a> EventGenerator<'a> {
             TypeKind::EventType => self.render_event(&ty, id),
             TypeKind::ObjectType => self.render_object_type(&ty),
             TypeKind::VariableType => self.render_variable_type(&ty),
-            r => Err(CodeGenError::Other(format!(
+            r => Err(CodeGenError::other(format!(
                 "Got unexpected type kind to render: {r:?}"
             ))),
         }
+        .map_err(|e| e.with_context(format!("rendering type {}", ty.name)))
     }
 
     fn get_data_type(&self, data_type_id: &str) -> Result<TokenStream, CodeGenError> {
         let Some(data_type) = self.types.get(data_type_id) else {
-            return Err(CodeGenError::Other(format!(
+            return Err(CodeGenError::other(format!(
                 "Data type {data_type_id} not found for variable"
             )));
         };
@@ -161,7 +156,7 @@ impl<'a> EventGenerator<'a> {
                     let typ = self.types.get(v).unwrap();
                     if self.is_simple(v) {
                         let data_type_id = field.data_type_id.ok_or_else(|| {
-                            CodeGenError::Other(format!("Missing valid data type for variable {v}"))
+                            CodeGenError::other(format!("Missing valid data type for variable {v}"))
                         })?;
 
                         self.get_data_type(data_type_id)?
@@ -266,7 +261,7 @@ impl<'a> EventGenerator<'a> {
 
         if !value_in_parent {
             let data_type_id = ty.data_type_id.ok_or_else(|| {
-                CodeGenError::Other(format!(
+                CodeGenError::other(format!(
                     "Missing valid data type for variable type {}",
                     ty.name
                 ))
@@ -313,7 +308,7 @@ impl<'a> EventGenerator<'a> {
         let identifier = format!("{k}{v}");
         let opcua_attr = if namespace > 0 {
             let namespace_uri = self.namespaces.get(namespace as usize).ok_or_else(|| {
-                CodeGenError::Other(format!(
+                CodeGenError::other(format!(
                     "Namespace index {namespace} is out of range of provided namespace table"
                 ))
             })?;

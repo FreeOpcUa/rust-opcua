@@ -90,8 +90,24 @@ impl<'a> NodeSetCodeGenerator<'a> {
         let mut fields = quote! {};
         for f in &def.fields {
             let value = f.value;
-            let display_name = self.get_localized_text(&f.display_names).render()?;
-            let description = self.get_localized_text(&f.descriptions).render()?;
+            let display_name = self
+                .get_localized_text(&f.display_names)
+                .render()
+                .map_err(|e| {
+                    e.with_context(format!(
+                        "rendering field {} in enum definition {}",
+                        f.name, def.name.0
+                    ))
+                })?;
+            let description = self
+                .get_localized_text(&f.descriptions)
+                .render()
+                .map_err(|e| {
+                    e.with_context(format!(
+                        "rendering field {} in enum definition {}",
+                        f.name, def.name.0
+                    ))
+                })?;
             let name = &f.name;
             fields.extend(quote! {
                 opcua::types::EnumField {
@@ -114,14 +130,39 @@ impl<'a> NodeSetCodeGenerator<'a> {
         let mut fields = quote! {};
         let mut any_optional = false;
         for f in &def.fields {
-            let description = self.get_localized_text(&f.descriptions).render()?;
+            let description = self
+                .get_localized_text(&f.descriptions)
+                .render()
+                .map_err(|e| {
+                    e.with_context(format!(
+                        "rendering field {} in structure definition {}",
+                        f.name, def.name.0
+                    ))
+                })?;
             let name = &f.name;
-            let data_type = self.resolve_node_id(&f.data_type)?;
+            let data_type = self.resolve_node_id(&f.data_type).map_err(|e| {
+                e.with_context(format!(
+                    "rendering field {} in structure definition {}",
+                    f.name, def.name.0
+                ))
+            })?;
             let value_rank = f.value_rank.0;
             let array_dimensions = self
-                .parse_array_dimensions(&f.array_dimensions)?
+                .parse_array_dimensions(&f.array_dimensions)
+                .map_err(|e| {
+                    e.with_context(format!(
+                        "rendering field {} in structure definition {}",
+                        f.name, def.name.0
+                    ))
+                })?
                 .as_ref()
-                .render()?;
+                .render()
+                .map_err(|e| {
+                    e.with_context(format!(
+                        "rendering field {} in structure definition {}",
+                        f.name, def.name.0
+                    ))
+                })?;
             let max_string_length = f.max_string_length as u32;
             let is_optional = f.is_optional;
             any_optional |= is_optional;
@@ -169,7 +210,7 @@ impl<'a> NodeSetCodeGenerator<'a> {
         let mut values = Vec::with_capacity(1);
         for it in dims.0.split(',') {
             values.push(it.trim().parse::<u32>().map_err(|_| {
-                CodeGenError::Other(format!("Invalid array dimensions: {}", dims.0))
+                CodeGenError::other(format!("Invalid array dimensions: {}", dims.0))
             })?);
         }
 
@@ -368,7 +409,12 @@ impl<'a> NodeSetCodeGenerator<'a> {
         let func_name: Ident = parse_str(&func_name_str)?;
         self.node_counter += 1;
 
-        let references = self.generate_references(node.base())?;
+        let references = self.generate_references(node.base()).map_err(|e| {
+            e.with_context(format!(
+                "generating references for node {}",
+                node.base().node_id.0
+            ))
+        })?;
         let node = match &node {
             UANode::Object(n) => self.generate_object(n),
             UANode::Variable(n) => self.generate_variable(n),
@@ -378,7 +424,8 @@ impl<'a> NodeSetCodeGenerator<'a> {
             UANode::VariableType(n) => self.generate_variable_type(n),
             UANode::DataType(n) => self.generate_data_type(n),
             UANode::ReferenceType(n) => self.generate_reference_type(n),
-        }?;
+        }
+        .map_err(|e| e.with_context(format!("generating node {}", node.base().node_id.0)))?;
 
         let func: ItemFn = parse_quote! {
             #[allow(unused)]

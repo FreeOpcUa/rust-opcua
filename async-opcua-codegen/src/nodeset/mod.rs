@@ -67,7 +67,8 @@ pub fn make_type_dict(
         let xsd_file = std::fs::read_to_string(format!("{}/{}", root_path, file.file_path))
             .map_err(|e| CodeGenError::io(&format!("Failed to read file {}", file.file_path), e))?;
         let path: Path = parse_str(&file.root_path)?;
-        let xsd_file = load_xsd_schema(&xsd_file)?;
+        let xsd_file = load_xsd_schema(&xsd_file)
+            .map_err(|e| CodeGenError::from(e).in_file(&file.file_path))?;
 
         for it in xsd_file.items {
             let (ty, name) = match it {
@@ -159,7 +160,11 @@ pub fn generate_target(
 
     let mut fns = Vec::with_capacity(nodes.nodes.len());
     for node in &nodes.nodes {
-        fns.push(generator.generate_item(node)?);
+        fns.push(
+            generator
+                .generate_item(node)
+                .map_err(|e| e.in_file(&config.file_path))?,
+        );
     }
     fns.sort_by(|a, b| a.name.cmp(&b.name));
     println!("Generated {} node creation methods", fns.len());

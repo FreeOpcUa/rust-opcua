@@ -298,14 +298,14 @@ impl<'a> ValueBuilder<'a> {
         // Is the type a ListOf type? We don't support that at all in this position, since the standard
         // doesn't actually define data types for the ListOf items.
         if ty.starts_with("ListOf") {
-            return Err(CodeGenError::Other("Got ListOf type inside extension object, this is not supported, use ListOfExtensionObject instead.".to_string()));
+            return Err(CodeGenError::other("Got ListOf type inside extension object, this is not supported, use ListOfExtensionObject instead.".to_string()));
         }
 
         let Some(typ) = self.types.get(ty) else {
-            return Err(CodeGenError::Other(format!("Unknown type {ty}")));
+            return Err(CodeGenError::other(format!("Unknown type {ty}")));
         };
         // First, we need to evaluate the type
-        let type_ref = self.make_type_ref(typ).map_err(CodeGenError::Other)?;
+        let type_ref = self.make_type_ref(typ).map_err(CodeGenError::other)?;
 
         // Now for rendering the type itself,
         self.render_complex_type(&type_ref, data)
@@ -321,7 +321,7 @@ impl<'a> ValueBuilder<'a> {
                 let (ident, _) = safe_ident(e.name);
                 // An enum must have content
                 let Some(val) = &node.text else {
-                    return Err(CodeGenError::Other(format!(
+                    return Err(CodeGenError::other(format!(
                         "Expected value for type, got {node:?}"
                     )));
                 };
@@ -331,7 +331,7 @@ impl<'a> ValueBuilder<'a> {
                     // value as a number.
                     let val = val
                         .parse::<i64>()
-                        .map_err(|e| CodeGenError::ParseInt("Content".to_owned(), e))?;
+                        .map_err(|e| CodeGenError::parse_int("Content".to_owned(), e))?;
                     let path = e.path;
                     Ok(quote! {
                         #path::#ident::from_bits_truncate(#val.into())
@@ -339,7 +339,7 @@ impl<'a> ValueBuilder<'a> {
                 } else {
                     // Else it should be on the form Key_0, parse it
                     let Some(end) = val.rfind("_") else {
-                        return Err(CodeGenError::Other(format!(
+                        return Err(CodeGenError::other(format!(
                             "Invalid enum value: {val}, should be on the form Key_0"
                         )));
                     };
@@ -382,7 +382,7 @@ impl<'a> ValueBuilder<'a> {
             .as_ref()
             .is_some_and(|m| !matches!(m, MaxOccurs::Count(1)));
         let Some(type_name) = &field.r#type else {
-            return Err(CodeGenError::Other(format!(
+            return Err(CodeGenError::other(format!(
                 "Failed to render field, element {} has no type",
                 name
             )));
@@ -398,7 +398,7 @@ impl<'a> ValueBuilder<'a> {
             .get(type_name)
             .map(|t| self.make_type_ref(t))
             .transpose()
-            .map_err(CodeGenError::Other)?;
+            .map_err(CodeGenError::other)?;
 
         if is_array {
             let items: Vec<_> = node.children_with_name(name).collect();
@@ -416,7 +416,7 @@ impl<'a> ValueBuilder<'a> {
                         })
                     } else {
                         let Some(r) = &ty else {
-                            return Err(CodeGenError::Other(format!("Type {type_name} not found")));
+                            return Err(CodeGenError::other(format!("Type {type_name} not found")));
                         };
                         let rendered = self.render_complex_type(r, item)?;
                         it.extend(quote! {
@@ -440,7 +440,7 @@ impl<'a> ValueBuilder<'a> {
                 Self::render_primitive(item, type_name)
             } else {
                 let Some(r) = &ty else {
-                    return Err(CodeGenError::Other(format!("Type {type_name} not found")));
+                    return Err(CodeGenError::other(format!("Type {type_name} not found")));
                 };
                 self.render_complex_type(r, item)
             }
@@ -501,7 +501,7 @@ impl<'a> ValueBuilder<'a> {
                 "Variant" => "Variant",
                 "StatusCode" => "StatusCode",
                 _ => {
-                    return Err(CodeGenError::Other(format!(
+                    return Err(CodeGenError::other(format!(
                         "ListOf type {ty} is not supported, use ListOfExtensionObject instead"
                     )))
                 }
@@ -529,7 +529,7 @@ impl<'a> ValueBuilder<'a> {
             "Guid" => {
                 if let Some(data) = node.child_content("String") {
                     let uuid = uuid::Uuid::parse_str(data).map_err(|e| {
-                        CodeGenError::Other(format!("Failed to parse uuid {data}: {e}"))
+                        CodeGenError::other(format!("Failed to parse uuid {data}: {e}"))
                     })?;
                     let bytes = uuid.as_bytes();
                     return Ok(quote! {
@@ -585,12 +585,12 @@ impl<'a> ValueBuilder<'a> {
                 });
             }
             "Variant" => {
-                return Err(CodeGenError::Other(
+                return Err(CodeGenError::other(
                     "Nested variants are not currently supported".to_owned(),
                 ))
             }
             "ExtensionObject" => {
-                return Err(CodeGenError::Other(
+                return Err(CodeGenError::other(
                     "Nested extensionobjects are not currently supported".to_owned(),
                 ))
             }
@@ -620,7 +620,7 @@ impl<'a> ValueBuilder<'a> {
             "dateTime" => {
                 let ts = chrono::DateTime::parse_from_rfc3339(data)
                     .map_err(|e| {
-                        CodeGenError::Other(format!("Failed to parse datetime {data}: {e}"))
+                        CodeGenError::other(format!("Failed to parse datetime {data}: {e}"))
                     })?
                     .timestamp_micros();
                 Ok(quote! {
