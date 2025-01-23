@@ -669,34 +669,30 @@ impl<'a> ValueBuilder<'a> {
                 let (parent, sequence) = match &c.content {
                     // A complex type containing a complexcontent containing an extension is
                     // a struct that inherits fields from another struct.
-                    Some(ComplexTypeContents::Complex(ComplexContent::Restriction(e))) => {
-                        let (_, base_name) = e
-                            .base
-                            .base
-                            .as_ref()
-                            .ok_or_else(|| {
-                                format!("Type {} is complex with a restriction, but no base", name)
-                            })?
-                            .split_once(":")
-                            .ok_or_else(|| {
-                                format!(
-                                    "Type {} has a base type not on the form namespace:name",
-                                    name
-                                )
-                            })?;
+                    Some(ComplexTypeContents::Complex(ComplexContent::Extension(e))) => {
+                        let (_, base_name) = e.base.as_str().split_once(":").ok_or_else(|| {
+                            format!(
+                                "Type {} has a base type not on the form namespace:name",
+                                name
+                            )
+                        })?;
                         let base_type = self.types.get(base_name).ok_or_else(|| {
                             format!("Base type of {}, {} not found", name, base_name)
                         })?;
                         let TypeRef::Struct(base_type) = self.make_type_ref(base_type)? else {
                             return Err(format!("Base type of struct {} must be a struct", name));
                         };
-                        let TypeDefParticle::Sequence(s) =
-                            e.particle.as_ref().ok_or_else(|| {
-                                format!("Type {} restriction does not contain a particle", name)
-                            })?
-                        else {
-                            return Err(format!("Type is complex with a restriction that does not contain a sequence: {}", name));
-                        };
+                        let s = e
+                            .content
+                            .iter()
+                            .filter_map(|p| match p {
+                                TypeDefParticle::Sequence(s) => Some(s),
+                                _ => None,
+                            })
+                            .next()
+                            .ok_or_else(|| {
+                                format!("Type {} extension does not contain a sequence", name)
+                            })?;
 
                         (Some(base_type), s)
                     }
