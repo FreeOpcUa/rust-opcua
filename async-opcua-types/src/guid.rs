@@ -137,4 +137,11 @@ impl Guid {
             uuid: Uuid::from_bytes(bytes),
         }
     }
+
+    /// Creates an UUID from a byte slice of exactly 16 bytes.
+    pub fn from_slice(bytes: &[u8]) -> Result<Guid, uuid::Error> {
+        Ok(Guid {
+            uuid: Uuid::from_slice(bytes)?,
+        })
+    }
 }

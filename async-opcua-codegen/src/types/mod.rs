@@ -52,6 +52,12 @@ pub fn generate_types(
 
     let generator = CodeGenerator::new(
         types_import_map,
+        [
+            "bool", "i8", "u8", "i16", "u16", "i32", "u32", "i64", "u64", "f32", "f64", "i32",
+        ]
+        .into_iter()
+        .map(|v| v.to_owned())
+        .collect(),
         types,
         target.default_excluded.clone(),
         CodeGenItemConfig {
@@ -65,6 +71,10 @@ pub fn generate_types(
 }
 
 pub fn type_loader_impl(ids: &[(EncodingIds, String)], namespace: &str) -> Vec<Item> {
+    if ids.is_empty() {
+        return Vec::new();
+    }
+
     let mut ids: Vec<_> = ids.iter().collect();
     ids.sort_by(|a, b| a.1.cmp(&b.1));
     let mut res = Vec::new();

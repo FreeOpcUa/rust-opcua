@@ -96,11 +96,13 @@ pub struct CodeGenerator {
     default_excluded: HashSet<String>,
     config: CodeGenItemConfig,
     target_namespace: String,
+    native_types: HashSet<String>,
 }
 
 impl CodeGenerator {
     pub fn new(
         external_import_map: HashMap<String, ExternalType>,
+        native_types: HashSet<String>,
         input: Vec<LoadedType>,
         default_excluded: HashSet<String>,
         config: CodeGenItemConfig,
@@ -128,6 +130,7 @@ impl CodeGenerator {
             config,
             default_excluded,
             target_namespace,
+            native_types,
         }
     }
 
@@ -242,8 +245,12 @@ impl CodeGenerator {
         if let Some(ext) = self.import_map.get(name) {
             return format!("{}::{}", ext.path, name);
         }
+        // Is it a native type?
+        if self.native_types.contains(name) {
+            return name.to_owned();
+        }
         // Assume the type is a builtin.
-        name.to_string()
+        format!("opcua::types::{}", name)
     }
 
     fn has_default(&self, name: &str) -> bool {
@@ -595,9 +602,6 @@ impl CodeGenerator {
         let mut encoding_ids = None;
         // Generate impls
         // Has message info
-        // TODO: This won't work for custom types. It may be possible
-        // to change `MessageInfo` to return a NodeId, then figure out the
-        // correct value of that during codegen.
         if item
             .base_type
             .as_ref()

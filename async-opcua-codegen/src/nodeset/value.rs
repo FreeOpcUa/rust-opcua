@@ -94,7 +94,7 @@ impl<'a> ValueBuilder<'a> {
             Variant::Guid(v) => {
                 let bytes = v.as_bytes();
                 quote::quote! {
-                    opcua::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
+                    opcua::types::Guid::from_bytes(&[#(#bytes),*])
                 }
             }
             Variant::ListOfGuid(v) => {
@@ -103,7 +103,7 @@ impl<'a> ValueBuilder<'a> {
                 for it in bytes {
                     items.extend(quote::quote! {
                         #items,
-                        opcua::types::Uuid::from_slice(&[#(#it),*]).unwrap(),
+                        opcua::types::Guid::from_bytes(&[#(#it),*]),
                     });
                 }
                 quote::quote! {
@@ -334,7 +334,7 @@ impl<'a> ValueBuilder<'a> {
                         .map_err(|e| CodeGenError::parse_int("Content".to_owned(), e))?;
                     let path = e.path;
                     Ok(quote! {
-                        #path::#ident::from_bits_truncate(#val.into())
+                        #path::#ident::from_bits_truncate(#val.try_into().unwrap())
                     })
                 } else {
                     // Else it should be on the form Key_0, parse it
@@ -393,9 +393,10 @@ impl<'a> ValueBuilder<'a> {
             type_name
         };
         let is_primitive = Self::is_primitive(type_name);
+        let list_type = type_name.strip_prefix("ListOf");
         let ty = self
             .types
-            .get(type_name)
+            .get(list_type.unwrap_or(type_name))
             .map(|t| self.make_type_ref(t))
             .transpose()
             .map_err(CodeGenError::other)?;
@@ -418,7 +419,11 @@ impl<'a> ValueBuilder<'a> {
                         let Some(r) = &ty else {
                             return Err(CodeGenError::other(format!("Type {type_name} not found")));
                         };
-                        let rendered = self.render_complex_type(r, item)?;
+                        let rendered = if let Some(element_type) = list_type {
+                            self.render_list(r, item, element_type)?
+                        } else {
+                            self.render_complex_type(r, item)?
+                        };
                         it.extend(quote! {
                             #rendered,
                         })
@@ -442,9 +447,38 @@ impl<'a> ValueBuilder<'a> {
                 let Some(r) = &ty else {
                     return Err(CodeGenError::other(format!("Type {type_name} not found")));
                 };
-                self.render_complex_type(r, item)
+                if let Some(element_type) = list_type {
+                    self.render_list(r, item, element_type)
+                } else {
+                    self.render_complex_type(r, item)
+                }
             }
         }
+    }
+
+    fn render_list(
+        &self,
+        ty: &TypeRef,
+        node: &XmlElement,
+        list_type: &str,
+    ) -> Result<TokenStream, CodeGenError> {
+        let items: Vec<_> = node.children_with_name(list_type).collect();
+        if items.is_empty() {
+            return Ok(quote! {
+                None
+            });
+        }
+
+        let mut it = quote! {};
+        for item in node.children_with_name(list_type) {
+            let rendered = self.render_complex_type(ty, item)?;
+            it.extend(quote! {
+                #rendered,
+            });
+        }
+        Ok(quote! {
+            Some(vec![#it])
+        })
     }
 
     fn is_primitive(type_name: &str) -> bool {
@@ -472,7 +506,33 @@ impl<'a> ValueBuilder<'a> {
                 | "ExtensionObject"
                 | "Variant"
                 | "StatusCode"
-        ) || type_name.starts_with("ListOf")
+        ) || type_name.strip_prefix("ListOf").is_some_and(|e| {
+            matches!(
+                e,
+                "Boolean"
+                    | "SByte"
+                    | "Byte"
+                    | "Int16"
+                    | "UInt16"
+                    | "Int32"
+                    | "UInt32"
+                    | "Int64"
+                    | "UInt64"
+                    | "Float"
+                    | "Double"
+                    | "String"
+                    | "DateTime"
+                    | "Guid"
+                    | "ByteString"
+                    | "QualifiedName"
+                    | "LocalizedText"
+                    | "NodeId"
+                    | "ExpandedNodeId"
+                    | "ExtensionObject"
+                    | "Variant"
+                    | "StatusCode"
+            )
+        })
     }
 
     fn render_primitive(node: &XmlElement, ty: &str) -> Result<TokenStream, CodeGenError> {
@@ -533,11 +593,11 @@ impl<'a> ValueBuilder<'a> {
                     })?;
                     let bytes = uuid.as_bytes();
                     return Ok(quote! {
-                        opcua::types::Uuid::from_slice(&[#(#bytes),*]).unwrap()
+                        opcua::types::Guid::from_bytes([#(#bytes),*])
                     });
                 } else {
                     return Ok(quote! {
-                        opcua::types::Uuid::nil()
+                        opcua::types::Guid::nil()
                     });
                 }
             }
@@ -624,7 +684,7 @@ impl<'a> ValueBuilder<'a> {
                     })?
                     .timestamp_micros();
                 Ok(quote! {
-                    opcua::types::DateTimeUtc::from_timestamp_micros(#ts).unwrap()
+                    opcua::types::DateTimeUtc::from_timestamp_micros(#ts).unwrap().into()
                 })
             }
             "base64Binary" => {
