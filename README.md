@@ -50,7 +50,7 @@ Tutorials / user guides are still work in progress.
 
 The API documentation is generated from the latest published crates. This may be some way behind current development. 
 
-<a href="https://docs.rs/opcua"><img src="https://docs.rs/opcua/badge.svg"></img></a>
+<a href="https://docs.rs/async-opcua"><img src="https://docs.rs/async-opcua/badge.svg"></img></a>
 
 # Samples
 

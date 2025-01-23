@@ -88,4 +88,4 @@ A server uses the identity in any way it chooses, e.g. allowing only authorized 
 ## More information
 
 * [OPC Foundation](https://opcfoundation.org/)
-
+* [The standard](https://reference.opcfoundation.org/)

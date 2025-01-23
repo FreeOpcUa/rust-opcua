@@ -8,8 +8,8 @@ homepage = "https://github.com/freeopcua/async-opcua"
 repository = "https://github.com/freeopcua/async-opcua"
 license = "MPL-2.0"
 keywords = ["opcua", "opc", "ua"]
-readme = "../README.md"
-documentation = "https://docs.rs/opcua/"
+readme = "README.md"
+documentation = "https://docs.rs/async-opcua-xml/"
 
 [lib]
 name = "opcua_xml"

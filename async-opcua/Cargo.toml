@@ -8,19 +8,19 @@ repository = "https://github.com/freeopcua/async-opcua"
 license = "MPL-2.0"
 keywords = ["opcua", "opc", "ua"]
 categories = ["embedded", "network-programming"]
-readme = "../README.md"
-documentation = "https://docs.rs/opcua/"
+readme = "README.md"
+documentation = "https://docs.rs/async-opcua/"
 edition = "2021"
 
 [lib]
 name = "opcua"
 
 [features]
-default = ["server", "client"]
+default = []
 all = ["server", "client", "console-logging"]
 # Server default settings
 server = ["base-server", "generated-address-space"]
-# Base server, without the core address space and discovery server registration
+# Base server, without the core address space.
 base-server = ["async-opcua-server", "async-opcua-nodes"]
 # Client default settings
 client = ["async-opcua-client"]
@@ -68,4 +68,4 @@ tokio = { workspace = true }
 tokio-util = { workspace = true }
 
 # Include console-logging and json when building tests
-async-opcua = { path = ".", features = ["console-logging", "json", "xml"] }
+async-opcua = { path = ".", features = ["all", "json", "xml"] }

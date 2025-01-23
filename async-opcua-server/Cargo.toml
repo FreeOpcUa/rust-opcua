@@ -8,15 +8,15 @@ repository = "https://github.com/freeopcua/async-opcua"
 license = "MPL-2.0"
 keywords = ["opcua", "opc", "ua"]
 categories = ["embedded", "network-programming"]
-readme = "../README.md"
-documentation = "https://docs.rs/opcua/"
+readme = "README.md"
+documentation = "https://docs.rs/async-opcua-server/"
 edition = "2021"
 
 [lib]
 name = "opcua_server"
 
 [features]
-default = ["discovery-server-registration", "generated-address-space"]
+default = ["generated-address-space"]
 # Includes all the code to populate the address space with the default node set. This is something that embedded
 # systems may or may not require.
 generated-address-space = ["async-opcua-core-namespace"]
@@ -38,7 +38,6 @@ log = { workspace = true }
 parking_lot = { workspace = true }
 regex = { workspace = true }
 serde = { workspace = true }
-serde_json = { workspace = true }
 tokio = { workspace = true }
 tokio-util = { workspace = true }
 postcard = { workspace = true }
@@ -51,3 +50,7 @@ async-opcua-nodes = { path = "../async-opcua-nodes", version = "0.14.0" }
 
 async-opcua-client = { path = "../async-opcua-client", optional = true, version = "0.14.0" }
 async-opcua-core-namespace = { path = "../async-opcua-core-namespace", optional = true, version = "0.14.0" }
+
+
+[dev-dependencies]
+async-opcua-server = { path = ".", features = ["discovery-server-registration", "json"]}

@@ -121,7 +121,6 @@ dependencies = [
  "async-opcua-crypto",
  "async-opcua-nodes",
  "async-opcua-types",
- "async-opcua-xml",
  "async-trait",
  "chrono",
  "futures",
@@ -136,7 +135,7 @@ dependencies = [
 
 [[package]]
 name = "async-opcua-codegen"
-version = "0.13.0"
+version = "0.14.0"
 dependencies = [
  "async-opcua-xml",
  "base64 0.22.1",
@@ -282,6 +281,7 @@ dependencies = [
  "async-opcua-core-namespace",
  "async-opcua-crypto",
  "async-opcua-nodes",
+ "async-opcua-server",
  "async-opcua-types",
  "async-trait",
  "bitflags",
@@ -293,7 +293,6 @@ dependencies = [
  "postcard",
  "regex",
  "serde",
- "serde_json",
  "tokio",
  "tokio-util",
 ]

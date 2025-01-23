@@ -13,7 +13,6 @@ use opcua_types::{
 };
 
 #[derive(Debug, Clone, PartialEq)]
-#[cfg_attr(feature = "json", serde::Serialize)]
 pub enum Notification {
     MonitoredItemNotification(MonitoredItemNotification),
     Event(EventFieldList),

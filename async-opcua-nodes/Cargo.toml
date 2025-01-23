@@ -8,8 +8,8 @@ repository = "https://github.com/freeopcua/async-opcua"
 license = "MPL-2.0"
 keywords = ["opcua", "opc", "ua"]
 categories = ["embedded", "network-programming"]
-readme = "../README.md"
-documentation = "https://docs.rs/opcua/"
+readme = "README.md"
+documentation = "https://docs.rs/async-opcua-nodes/"
 edition = "2021"
 
 [lib]
