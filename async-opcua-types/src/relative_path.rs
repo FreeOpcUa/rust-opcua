@@ -13,6 +13,7 @@ use log::error;
 use regex::Regex;
 
 use crate::{
+    errors::OpcUaError,
     node_id::{Identifier, NodeId},
     qualified_name::QualifiedName,
     string::UAString,
@@ -28,7 +29,7 @@ impl RelativePath {
     /// Converts a string into a relative path. Caller must supply a `node_resolver` which will
     /// be used to look up nodes from their browse name. The function will reject strings
     /// that look unusually long or contain too many elements.
-    pub fn from_str<CB>(path: &str, node_resolver: &CB) -> Result<RelativePath, RelativePathError>
+    pub fn from_str<CB>(path: &str, node_resolver: &CB) -> Result<RelativePath, OpcUaError>
     where
         CB: Fn(u16, &str) -> Option<NodeId>,
     {
@@ -66,14 +67,14 @@ impl RelativePath {
             }
             if token.len() > Self::MAX_TOKEN_LEN {
                 error!("Path segment seems unusually long and has been rejected");
-                return Err(RelativePathError::PathSegmentTooLong);
+                return Err(OpcUaError::PathSegmentTooLong);
             }
         }
 
         if !token.is_empty() {
             if elements.len() == Self::MAX_ELEMENTS {
                 error!("Number of elements in relative path is too long, rejecting it");
-                return Err(RelativePathError::TooManyElements);
+                return Err(OpcUaError::TooManyElementsInPath);
             }
             elements.push(RelativePathElement::from_str(&token, node_resolver)?);
         }
@@ -127,6 +128,7 @@ impl TryFrom<String> for RelativePath {
         RelativePath::from_str(&value, &RelativePathElement::default_node_resolver)
     }
 }
+
 impl<'a> From<&'a RelativePathElement> for String {
     fn from(element: &'a RelativePathElement) -> String {
         let mut result = element
@@ -269,10 +271,7 @@ impl RelativePathElement {
     /// * `<!NonHierarchicalReferences>foo`
     /// * `<#!2:MyReftype>2:blah`
     ///
-    pub fn from_str<CB>(
-        path: &str,
-        node_resolver: &CB,
-    ) -> Result<RelativePathElement, RelativePathError>
+    pub fn from_str<CB>(path: &str, node_resolver: &CB) -> Result<RelativePathElement, OpcUaError>
     where
         CB: Fn(u16, &str) -> Option<NodeId>,
     {
@@ -313,7 +312,7 @@ impl RelativePathElement {
                             node_resolver(namespace, browse_name)
                         } else {
                             error!("Namespace {} is out of range", namespace);
-                            return Err(RelativePathError::NamespaceOutOfRange);
+                            return Err(OpcUaError::NamespaceOutOfRange);
                         }
                     } else {
                         node_resolver(0, browse_name)
@@ -323,7 +322,7 @@ impl RelativePathElement {
                             "Supplied node resolver was unable to resolve a reference type from {}",
                             path
                         );
-                        return Err(RelativePathError::UnresolvedReferenceType);
+                        return Err(OpcUaError::UnresolvedReferenceType);
                     }
                     (reference_type_id.unwrap(), include_subtypes, is_inverse)
                 }
@@ -336,7 +335,7 @@ impl RelativePathElement {
             })
         } else {
             error!("Path {} does not match a relative path", path);
-            Err(RelativePathError::NoMatch)
+            Err(OpcUaError::NoMatch)
         }
     }
 
@@ -383,21 +382,6 @@ impl RelativePathElement {
     }
 }
 
-#[derive(Debug, Clone)]
-/// Error returned from parsing a relative path.
-pub enum RelativePathError {
-    /// Namespace is out of range of a u16.
-    NamespaceOutOfRange,
-    /// Supplied node resolver was unable to resolve a reference type.
-    UnresolvedReferenceType,
-    /// Path does not match a relative path.
-    NoMatch,
-    /// Path segment is unusually long and has been rejected.
-    PathSegmentTooLong,
-    /// Number of elements in relative path is too large.
-    TooManyElements,
-}
-
 impl<'a> From<&'a RelativePath> for String {
     fn from(path: &'a RelativePath) -> String {
         if let Some(ref elements) = path.elements {
@@ -441,7 +425,7 @@ fn unescape_browse_name(name: &str) -> String {
 /// * 0:foo
 /// * bar
 ///
-fn target_name(target_name: &str) -> Result<QualifiedName, RelativePathError> {
+fn target_name(target_name: &str) -> Result<QualifiedName, OpcUaError> {
     static RE: LazyLock<Regex> =
         LazyLock::new(|| Regex::new(r"((?P<nsidx>[0-9+]):)?(?P<name>.*)").unwrap());
     if let Some(captures) = RE.captures(target_name) {
@@ -453,7 +437,7 @@ fn target_name(target_name: &str) -> Result<QualifiedName, RelativePathError> {
                     "Namespace {} for target name is out of range",
                     namespace.as_str()
                 );
-                return Err(RelativePathError::NamespaceOutOfRange);
+                return Err(OpcUaError::NamespaceOutOfRange);
             }
         } else {
             0
