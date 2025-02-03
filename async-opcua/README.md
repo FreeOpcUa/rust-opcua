@@ -66,11 +66,11 @@ Note that this library is split into multiple different crates. OPC-UA is a comp
 
 The `async-opcua` github repo contains a number of samples that may be used as reference when writing your own clients and servers.
 
-1. [`simple-server`](../samples/simple-server) - an OPC-UA server that adds 4 variables v1, v2, v3 and v4 and updates them from a timer via push and pull mechanisms.
-2. [`simple-client`](../samples/simple-client) - an OPC-UA client that connects to a server and subscribes to the values of v1, v2, v3 and v4.
-3. [`discovery-client`](../samples/discovery-client) - an OPC-UA client that connects to a discovery server and lists the servers registered on it.
-4. [`chess-server`](../samples/chess-server) - an OPC-UA server that connects to a chess engine as its back end and updates variables representing the state of the game.
-5. [`demo-server`](../samples/demo-server) - an OPC-UA server that is more complex than the simple server and can be used for compliance testing.
-6. [`mqtt-client`](../samples/mqtt-client) - an OPC-UA client that subscribes to some values and publishes them to an MQTT broker.
-7. [`event-client`](../samples/event-client) - an OPC-UA client that will connect to a server and subscribe to alarms / events.
-8. [`custom-codegen](../samples/custom-codegen) - an OPC-UA server that implements an OPC-UA companion standard generated using `async-opcua-codegen`.
+1. [simple-server](../samples/simple-server) - an OPC-UA server that adds 4 variables v1, v2, v3 and v4 and updates them from a timer via push and pull mechanisms.
+2. [simple-client](../samples/simple-client) - an OPC-UA client that connects to a server and subscribes to the values of v1, v2, v3 and v4.
+3. [discovery-client](../samples/discovery-client) - an OPC-UA client that connects to a discovery server and lists the servers registered on it.
+4. [chess-server](../samples/chess-server) - an OPC-UA server that connects to a chess engine as its back end and updates variables representing the state of the game.
+5. [demo-server](../samples/demo-server) - an OPC-UA server that is more complex than the simple server and can be used for compliance testing.
+6. [mqtt-client](../samples/mqtt-client) - an OPC-UA client that subscribes to some values and publishes them to an MQTT broker.
+7. [event-client](../samples/event-client) - an OPC-UA client that will connect to a server and subscribe to alarms / events.
+8. [custom-codegen](../samples/custom-codegen) - an OPC-UA server that implements an OPC-UA companion standard generated using `async-opcua-codegen`.

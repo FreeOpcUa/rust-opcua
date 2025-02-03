@@ -69,3 +69,6 @@ tokio-util = { workspace = true }
 
 # Include console-logging and json when building tests
 async-opcua = { path = ".", features = ["all", "json", "xml"] }
+
+[package.metadata.docs.rs]
+all-features = true

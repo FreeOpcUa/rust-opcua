@@ -32,3 +32,6 @@ async-opcua-xml = { path = "../async-opcua-xml", optional = true, version = "0.1
 
 [dev-dependencies]
 async-opcua-nodes = { path = ".", features = ["xml"] }
+
+[package.metadata.docs.rs]
+all-features = true

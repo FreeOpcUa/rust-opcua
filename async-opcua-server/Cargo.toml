@@ -54,3 +54,6 @@ async-opcua-core-namespace = { path = "../async-opcua-core-namespace", optional 
 
 [dev-dependencies]
 async-opcua-server = { path = ".", features = ["discovery-server-registration", "json"]}
+
+[package.metadata.docs.rs]
+all-features = true
